@@ -1,0 +1,84 @@
+{% extends "base.html" %}
+{% block body %}
+    <div class="container-fluid">
+        <div class="top-buffer"></div>
+        <div class="row">
+            <div class="col-md-8 col-md-offset-2">
+                <a href="/"><h2>Каталог</h2></a>
+                <div class="product_name">
+                    <h1>{{ product.name }}</h1>
+                </div>
+                <!-- Nav tabs -->
+                <ul class="nav nav-tabs">
+                    <li class="active"><a href="#home" data-toggle="tab">Описание</a></li>
+                    <li><a href="#profile" data-toggle="tab">Характеристики</a></li>
+                    <li><a href="#messages" data-toggle="tab">Модификации</a></li>
+                    <li><a href="#settings" data-toggle="tab">Цены</a></li>
+                    <li><a href="#map" data-toggle="tab">Карта</a></li>
+                    <li><a href="#fidbacks" data-toggle="tab">Отзывы</a></li>
+                    <li><a href="#views" data-toggle="tab">Обзоры</a></li>
+                    <li><a href="#discus" data-toggle="tab">Обсуждения</a></li>
+                </ul>
+
+                <!-- Tab panes -->
+                <div class="tab-content">
+                    <div class="tab-pane active" id="home">
+                        <div class="row">
+                            <div class="col-md-5">
+                                <img class="product_img img-responsive" src="{{ url_for('static', filename='' + product.image) }}">
+                            </div>
+                            <div class="col-md-3">
+                                    <div class="colors">
+                                        <h4>Цвет</h4>
+                                        <div class="btn-group">
+                                            <button type="button" class="btn btn-default" id="grey">1</button>
+                                            <button type="button" class="btn btn-default" id="dark-grey">2</button>
+                                        </div>
+                                    </div>
+                                    <h4>Коротко о товаре:</h4>
+                                    <ul class="n-product-spec-list">
+                                        <li class="n-product-spec-list__item n-product-spec-list__item_type_friendly">Процессор: {{ product.processor }}</li>
+                                        <li class="n-product-spec-list__item n-product-spec-list__item_type_friendly">Частота процессора: {{ product.proc_frequency|round|int }}&nbsp;МГц</li>
+                                        <li class="n-product-spec-list__item n-product-spec-list__item_type_friendly">Объем оперативной памяти: {{ product.ram_size }}&nbsp;Гб</li>
+                                        <li class="n-product-spec-list__item n-product-spec-list__item_type_friendly">Объем жесткого диска: {{ product.hdd_size }}&nbsp;Гб</li>
+                                        <li class="n-product-spec-list__item n-product-spec-list__item_type_friendly">Размер экрана: {{ product.display_size }} "</li>
+                                        <li class="n-product-spec-list__item n-product-spec-list__item_type_friendly">Видеокарта: {{ product.video_card }}</li>
+                                        <li class="n-product-spec-list__item n-product-spec-list__item_type_friendly">Вес: {{ product.weight }}&nbsp;кг</li>
+                                        <li class="n-product-spec-list__item n-product-spec-list__item_type_friendly">Оптический привод: {% if product.dvd %}Есть{% else %}Нет{% endif %}</li>
+                                        <li class="n-product-spec-list__item n-product-spec-list__item_type_friendly">4G LTE: {% if product.four_G %}Есть{% else %}Нет{% endif %}</li>
+                                        <li class="n-product-spec-list__item n-product-spec-list__item_type_friendly">Bluetooth: {% if product.bluetooth %}Есть{% else %}Нет{% endif %}</li>
+                                        <li class="n-product-spec-list__item n-product-spec-list__item_type_friendly">Wi-Fi: {% if product.wifi %}Есть{% else %}Нет{% endif %}</li>
+                                    </ul>
+                                </div>
+                            <div class="col-md-4">
+                                    <div class="order">
+                                        <h3>{{ product.price }} &#8381;</h3>
+                                        <p>Цвет: {{ product.color }}</p>
+                                        <p>Объем жесткого диска:</p>
+                                        <p>Wi-Fi:</p>
+                                        <p>ПРЕДОСТАВЛЕНО</p>
+                                        <p>DNS ТЕХНОПОИНТ</p>
+                                        <p>Доставка    Самовывоз</p>
+                                        <p>Показать телефон</p>
+                                        <button type="button" class="btn btn-primary btn-lg active">В магазин</button>
+                                    </div>
+                                </div>
+                        </div>
+                    </div>
+                        <div class="tab-pane" id="profile"><h1>Характеристики</h1></div>
+                        <div class="tab-pane" id="messages"><h1>Модификации</h1></div>
+                        <div class="tab-pane" id="settings"><h1>Цены</h1></div>
+                        <div class="tab-pane" id="map"><h1>Карта</h1></div>
+                        <div class="tab-pane" id="fidbacks"><h1>Отзывы</h1></div>
+                        <div class="tab-pane" id="views"><h1>Обзоры</h1></div>
+                        <div class="tab-pane" id="discus"><h1>Обсуждения</h1></div>
+
+                </div>
+            </div>
+        </div>
+    </div>
+    <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
+    <!-- Include all compiled plugins (below), or include individual files as needed -->
+    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+{% endblock %}
