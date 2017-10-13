@@ -1,7 +1,6 @@
 import ast
 from find_py_files.file_names_getter_mixin import FileNamesGetterMixin
 
-
 class PyFileFinder(FileNamesGetterMixin):
     def __init__(self, path):
         self.path = path

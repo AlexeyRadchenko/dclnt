@@ -30,7 +30,7 @@ class TopGetter(WordsGetter):
     def get_top_words_in_classes_names(self, top_size=10):
         return self.top_get_words(super().get_classes_name_words, top_size)
 
-#====top words type in path, vars, functions, classes names====
+#====top verbs in path, vars, functions, classes names====
     def get_top_verbs_in_path(self, top_size=10):
         return self.top_get_words_type(super().get_all_words_in_path, is_verb, top_size)
 
@@ -42,3 +42,16 @@ class TopGetter(WordsGetter):
 
     def get_top_verbs_in_classes_names(self, top_size=10):
         return self.top_get_words_type(super().get_classes_name_words, is_verb, top_size)
+
+#====top nouns in path, vars, functions, classes names====
+    def get_top_nouns_in_path(self, top_size=10):
+        return self.top_get_words_type(super().get_all_words_in_path, is_noun, top_size)
+
+    def get_top_nouns_in_vars_names(self, top_size=10):
+        return self.top_get_words_type(super().get_vars_name_words, is_noun, top_size)
+
+    def get_top_nouns_in_functions_names(self, top_size=10):
+        return self.top_get_words_type(super().get_functions_name_words, is_noun, top_size)
+
+    def get_top_nouns_in_classes_names(self, top_size=10):
+        return self.top_get_words_type(super().get_classes_name_words, is_noun, top_size)
