@@ -1,19 +1,20 @@
 {% extends "base.html" %}
+{% load static %}
 {% block body %}
     <div class="container-fluid">
         <div class="row">
             <div class="col-md-8 col-sm-8 col-md-offset-2 col-sm-offset-2">
                 <div class="products">
-                    {% for product in products %}
+                    {% for product in object_list %}
                     <div class="product">
                         <div class="col-md-3 col-sm-3 item-picture">
-                        <img class="img-responsive" src="{{ url_for('static', filename=''+product.image) }}">
+                        <img class="img-responsive" src="{% static product.image %}">
                     </div>
                         <div class="col-md-6 item-info">
                             <h4><a href="/product/{{ product.id }}">{{ product.name }}</a></h4>
                         <ul>
                             <li>Процессор: {{ product.processor }}</li>
-                            <li>Частота процессора: {{ product.proc_frequency|round|int }} МГц</li>
+                            <li>Частота процессора: {{ product.proc_frequency|floatformat }} МГц</li>
                             <li>Объем оперативной памяти: {{ product.ram_size }} Гб</li>
                             <li>Объем жесткого диска: {{ product.hdd_size }} Гб</li>
                             <li>Цвет: {{ product.color }}</li>

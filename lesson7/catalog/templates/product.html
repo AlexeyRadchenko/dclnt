@@ -1,4 +1,5 @@
 {% extends "base.html" %}
+{% load static %}
 {% block body %}
     <div class="container-fluid">
         <div class="top-buffer"></div>
@@ -6,7 +7,7 @@
             <div class="col-md-8 col-md-offset-2">
                 <a href="/"><h2>Каталог</h2></a>
                 <div class="product_name">
-                    <h1>{{ product.name }}</h1>
+                    <h1>{{ object.name }}</h1>
                 </div>
                 <!-- Nav tabs -->
                 <ul class="nav nav-tabs">
@@ -25,7 +26,7 @@
                     <div class="tab-pane active" id="home">
                         <div class="row">
                             <div class="col-md-5">
-                                <img class="product_img img-responsive" src="{{ url_for('static', filename='' + product.image) }}">
+                                <img class="product_img img-responsive" src="{% static object.image %}">
                             </div>
                             <div class="col-md-3">
                                     <div class="colors">
@@ -37,13 +38,13 @@
                                     </div>
                                     <h4>Коротко о товаре:</h4>
                                     <ul class="n-product-spec-list">
-                                        <li class="n-product-spec-list__item n-product-spec-list__item_type_friendly">Процессор: {{ product.processor }}</li>
-                                        <li class="n-product-spec-list__item n-product-spec-list__item_type_friendly">Частота процессора: {{ product.proc_frequency|round|int }}&nbsp;МГц</li>
-                                        <li class="n-product-spec-list__item n-product-spec-list__item_type_friendly">Объем оперативной памяти: {{ product.ram_size }}&nbsp;Гб</li>
-                                        <li class="n-product-spec-list__item n-product-spec-list__item_type_friendly">Объем жесткого диска: {{ product.hdd_size }}&nbsp;Гб</li>
-                                        <li class="n-product-spec-list__item n-product-spec-list__item_type_friendly">Размер экрана: {{ product.display_size }} "</li>
-                                        <li class="n-product-spec-list__item n-product-spec-list__item_type_friendly">Видеокарта: {{ product.video_card }}</li>
-                                        <li class="n-product-spec-list__item n-product-spec-list__item_type_friendly">Вес: {{ product.weight }}&nbsp;кг</li>
+                                        <li class="n-product-spec-list__item n-product-spec-list__item_type_friendly">Процессор: {{ object.processor }}</li>
+                                        <li class="n-product-spec-list__item n-product-spec-list__item_type_friendly">Частота процессора: {{ object.proc_frequency|floatformat }}&nbsp;МГц</li>
+                                        <li class="n-product-spec-list__item n-product-spec-list__item_type_friendly">Объем оперативной памяти: {{ object.ram_size }}&nbsp;Гб</li>
+                                        <li class="n-product-spec-list__item n-product-spec-list__item_type_friendly">Объем жесткого диска: {{ object.hdd_size }}&nbsp;Гб</li>
+                                        <li class="n-product-spec-list__item n-product-spec-list__item_type_friendly">Размер экрана: {{ object.display_size }} "</li>
+                                        <li class="n-product-spec-list__item n-product-spec-list__item_type_friendly">Видеокарта: {{ object.video_card }}</li>
+                                        <li class="n-product-spec-list__item n-product-spec-list__item_type_friendly">Вес: {{ object.weight }}&nbsp;кг</li>
                                         <li class="n-product-spec-list__item n-product-spec-list__item_type_friendly">Оптический привод: {% if product.dvd %}Есть{% else %}Нет{% endif %}</li>
                                         <li class="n-product-spec-list__item n-product-spec-list__item_type_friendly">4G LTE: {% if product.four_G %}Есть{% else %}Нет{% endif %}</li>
                                         <li class="n-product-spec-list__item n-product-spec-list__item_type_friendly">Bluetooth: {% if product.bluetooth %}Есть{% else %}Нет{% endif %}</li>
@@ -52,8 +53,8 @@
                                 </div>
                             <div class="col-md-4">
                                     <div class="order">
-                                        <h3>{{ product.price }} &#8381;</h3>
-                                        <p>Цвет: {{ product.color }}</p>
+                                        <h3>{{ object.price }} &#8381;</h3>
+                                        <p>Цвет: {{ object.color }}</p>
                                         <p>Объем жесткого диска:</p>
                                         <p>Wi-Fi:</p>
                                         <p>ПРЕДОСТАВЛЕНО</p>
@@ -80,5 +81,5 @@
     <!-- jQuery (necessary for Bootstrap's JavaScript plugins) -->
     <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.11.0/jquery.min.js"></script>
     <!-- Include all compiled plugins (below), or include individual files as needed -->
-    <script src="{{ url_for('static', filename='js/bootstrap.min.js') }}"></script>
+    <script src="{% static 'js/bootstrap.min.js' %}"></script>
 {% endblock %}
