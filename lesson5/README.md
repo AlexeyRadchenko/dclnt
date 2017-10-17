@@ -1,4 +1,4 @@
-Catalog of NoteBooks.
+Catalog of NoteBooks (Flask).
 =========================
 
   - Python - 3.6
@@ -12,5 +12,3 @@ $ python main.py
 Start page:
 <http://localhost:5000/>
   
-
-![](lesson5/example.png)
