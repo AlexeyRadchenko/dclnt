@@ -1,0 +1,21 @@
+{% extends 'counters/base.html' %}
+{% load static %}
+{% block head %}
+{{ block.super }}
+    <!--js-->
+    <script src="{% static "js/js.cookie.js" %}"></script>
+    <script src="{% static "js/file_upload.js" %}"></script>
+    <!--js_end-->
+{% endblock %}
+{% block content %}
+
+<form action="/" method="post" id="file-upload-form" enctype="multipart/form-data"> {% csrf_token %}
+    {{ form.file_field }}
+    <button type="submit" class="btn btn-primary" id='upload-btn'>Upload</button>
+</form>
+
+    <div class="progress" style="width: 50%">
+  <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
+</div>
+
+{% endblock %}

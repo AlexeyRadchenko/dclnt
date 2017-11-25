@@ -9,5 +9,6 @@ $ cd lesson7
 $ python manage.py runserver
 ```
 Start page:
+
 <http://localhost:8000/>
   
