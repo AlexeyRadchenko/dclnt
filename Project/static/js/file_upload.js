@@ -11,7 +11,7 @@ $( document ).ready(function() {
         }).done(function (msg) {
             console.log(msg);
             //setTimeout(progressbarUpdate(0);
-            progressbarUpdate(0);
+            //progressbarUpdate(0);
         });
     };
 
@@ -27,7 +27,7 @@ $( document ).ready(function() {
                     'aria-valuenow', data['data_progress']).text(data['data_progress']+'%');
                 setTimeout(function() {
                     progressbarUpdate(data['data_progress']);
-                }, 500);
+                }, 10);
                 //progressbarUpdate(data['data_progress']);
             }
 

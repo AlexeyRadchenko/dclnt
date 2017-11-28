@@ -14,7 +14,7 @@ class Accounts(models.Model):
     class Meta:
         verbose_name = 'Лицевой счет'
         verbose_name_plural = 'Лицевые счета'
-    """
+"""
     @receiver(post_save, sender=User)
     def create_user(sender, instance, created, **kwargs):
         if created and instance.id != 1:
@@ -26,35 +26,34 @@ class Accounts(models.Model):
             instance.accounts.save()
 
     def __str__(self):
-        return str(self.user)
-    """
+        return str(self.user)"""
 
 
 class Counters(models.Model):
     id = models.AutoField(primary_key=True)
-    id_out_system = models.CharField(blank=True, max_length=8)
+    id_out_system = models.CharField(blank=True, max_length=8, null=True, unique=True)
     creation_date = models.DateField(blank=True, verbose_name='Дата производства', null=True)
     setup_date = models.DateField(blank=True, verbose_name='Дата установки', null=True)
     in_work = models.BooleanField(default=True, verbose_name='Установлен')
     counter_type = models.CharField(verbose_name='Тип счетчика', max_length=30)
     serial_number = models.CharField(verbose_name='Серийный номер', blank=True, null=True, max_length=10)
     counter_data_simple = models.DecimalField(blank=True, verbose_name='Показания обычные', null=True,
-                                              max_digits=6,
+                                              max_digits=9,
                                               decimal_places=3)
     counter_data_day = models.DecimalField(blank=True, verbose_name='Показания день', null=True,
-                                           max_digits=6,
+                                           max_digits=9,
                                            decimal_places=3)
     counter_data_night = models.DecimalField(blank=True, verbose_name='Показания ночь', null=True,
-                                             max_digits=6,
+                                             max_digits=9,
                                              decimal_places=3)
     old_counter_data_simple = models.DecimalField(blank=True, verbose_name='Прошлый период обычные', null=True,
-                                                  max_digits=6,
+                                                  max_digits=9,
                                                   decimal_places=3)
     old_counter_data_day = models.DecimalField(blank=True, verbose_name='Прошлый период день', null=True,
-                                               max_digits=6,
+                                               max_digits=9,
                                                decimal_places=3)
     old_counter_data_night = models.DecimalField(blank=True, verbose_name='Прошлый период ночь', null=True,
-                                                 max_digits=6,
+                                                 max_digits=9,
                                                  decimal_places=3)
     date_update = models.DateField(blank=True, null=True, verbose_name='Дата показаний')
     account_id = models.ForeignKey(Accounts, verbose_name='Лицевой счет', on_delete=models.CASCADE)
@@ -75,13 +74,13 @@ class DataHistory(models.Model):
     serial_number = models.CharField(verbose_name='Серийный номер', blank=True, null=True, max_length=10)
     date = models.DateField(blank=True, null=True, verbose_name='Дата показаний')
     data_simple = models.DecimalField(blank=True, verbose_name='Данные счетчика', null=True,
-                                      max_digits=6,
+                                      max_digits=9,
                                       decimal_places=3)
     data_day = models.DecimalField(blank=True, verbose_name='Данные по днивному тарифу', null=True,
-                                   max_digits=6,
+                                   max_digits=9,
                                    decimal_places=3)
     data_night = models.DecimalField(blank=True, verbose_name='Данные по ночному тарифу', null=True,
-                                     max_digits=6,
+                                     max_digits=9,
                                      decimal_places=3)
     in_work = models.BooleanField(default=True, verbose_name='Установлен')
 
