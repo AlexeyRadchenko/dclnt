@@ -1,7 +1,8 @@
 import re
 from datetime import datetime
 
-class BaseFormat:
+
+class LoadFormat:
     def __init__(self, row):
         self.data = {
             'N': int(row[0]),
@@ -35,6 +36,10 @@ class BaseFormat:
     def get_formatted_data(self):
         self.data_type_checker()
         return self.data
+
+
+class UnloadFormat:
+    pass
 
 """'000000,833'"""
 """

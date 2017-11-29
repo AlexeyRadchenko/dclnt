@@ -1,5 +1,6 @@
 from counters.models import Counters, Accounts, User
-from .input_format import BaseFormat
+from .formats import LoadFormat
+from Project import settings
 import xlrd
 
 
@@ -33,52 +34,12 @@ class FileReader:
     def xlsx_reader(file):
         return
 
-"""
-    def xls_reader(self, file):
-        sheet = xlrd.open_workbook(file, formatting_info=True).sheet_by_index(0)
-        counters_in_db = Counters.objects.all()
-        for row_num in range(1, sheet.nrows):
-            row = sheet.row_values(row_num)
-            
-
-            else:
-                print(True)"""
-
 
 class DataLoader(FileReader):
     def __init__(self, files_list):
         super().__init__(files_list)
         self.counter_buffer = None
 
-    """"@staticmethod
-    def row_to_counters_object(row):
-        data_dict = BaseFormat(row).get_formatted_data()
-        return Counters(
-            id_out_system=data_dict['id_from_out_db'],
-            in_work=True,
-            counter_type=data_dict['type_counter'],
-            serial_number=data_dict['serial_number'],
-            counter_data_simple=data_dict['simple_data'],
-            counter_data_day=data_dict['day_data'],
-            counter_data_night=data_dict['night_data'],
-            date_update=data_dict['last_date'],
-            account_id=Accounts(id=data_dict['account'],
-                                street=data_dict['street'],
-                                house_number=data_dict['house_number'],
-                                apartments_number=data_dict['apartments'],
-                                user=User(username=data_dict['account'],
-                                          password='asdwaDAWfaSDG#$@fs',
-                                          is_superuser=False)
-                                )
-        )
-        Accounts(id=counter['account'],
-                                    street=counter['street'],
-                                    house_number=counter['house_number'],
-                                    apartments_number=counter['apartments'],
-                                    user=User(username=counter['account'],
-                                              password='asdwaDAWfaSDG#$@fs',
-                                              is_superuser=False)
-                                    )"""
     """
     Данные о двухтарифном счетчике приходят ввиде двух строк
     100004655|Электроэнергия|10001482|Свет (день)|005547
@@ -100,14 +61,14 @@ class DataLoader(FileReader):
 
     def load(self):
         for row in self.rows:
-            counter_row = BaseFormat(row).get_formatted_data()
+            counter_row = LoadFormat(row).get_formatted_data()
             if counter_row['day_data'] or counter_row['night_data']:
                 if not self.buffer(counter_row):
                     continue
                 else:
                     counter_row = self.counter_buffer
-            print(counter_row['id_from_out_db'], counter_row['day_data'], counter_row['night_data'])
-            obj, created = Counters.objects.update_or_create(
+
+            counter_obj, counter_created = Counters.objects.update_or_create(
                 id_out_system=counter_row['id_from_out_db'],
                 in_work=True,
                 counter_type=counter_row['type_counter'],
@@ -123,11 +84,22 @@ class DataLoader(FileReader):
                 }
             )
             self.counter_buffer = None
-            if created:
-                self.counter_buffer = None
-                print('create', obj.counter_data_day, obj.counter_data_night)
+
+            if counter_created:
+                acc_obj, acc_created = Accounts.objects.update_or_create(
+                    id=counter_row['account'],
+                    street=counter_row['street'],
+                    house_number=counter_row['house_number'],
+                    apartments_number=counter_row['apartments'],
+                    user=User(id=counter_row['account'], username=counter_row['account']),
+                    defaults={
+                        'date_update': counter_row['last_date'],
+                    }
+                )
+
+                if acc_created:
+                    user = User(id=counter_row['account'], username=counter_row['account'])
+                    user.set_password(settings.USERS_PASS)
+                    user.save()
             else:
-                print('update', obj.counter_data_day, obj.counter_data_night)
-#print(FileReader(['text.xls']).xls_reader())
-"""
-Accounts(id=data_dict['account'], street=data_dict['street'], house_number=data_dict['house_number'], apartments_number=data_dict['apartments'])"""
+                Accounts.objects.filter(id=counter_row['account']).update(date_update=counter_row['last_date'])

@@ -106,7 +106,7 @@ INTERNAL_IPS = [
     '127.0.0.1'
 ]
 DATE_FORMAT = '%d.%m.%Y'
-
+USERS_PASS = 'zYbY50K#gsYzv*6mWl'
 """
 DATETIME_FORMAT = 'd.m.Y H:i'   # 18.09.2009 22:41
 TIME_FORMAT = 'H:i'

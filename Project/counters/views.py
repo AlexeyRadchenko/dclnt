@@ -2,7 +2,7 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from .forms import FileFieldForm
 from django.conf import settings
-from dataexchanger.loaders import FileReader, DataLoader
+from dataexchanger.importers import FileReader, DataLoader
 
 
 """USer django-debug-toolbar"""
