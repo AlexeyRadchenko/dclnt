@@ -2,52 +2,52 @@ from django.http import JsonResponse
 from django.shortcuts import render
 from .forms import FileFieldForm
 from django.conf import settings
+from django.core.cache import cache
 from dataexchanger.importers import FileReader, DataLoader
 
 
 """USer django-debug-toolbar"""
-def handle_uploaded_file(files):
+def handle_uploaded_file(files, request_id):
     files_list = []
     for f in files.getlist('file_field'):
         path_n_filename = ''.join([settings.MEDIA_ROOT, '/import/', f.name])
         with open(path_n_filename, 'wb+') as destination:
             for chunk in f.chunks():
                 destination.write(chunk)
-        files_list.append(path_n_filename)
-    """вызов загрузчика данных в базу из файла"""
 
-    #print('three', FileReader(files_list).result)
+        files_list.append(path_n_filename)
+        cache.set(request_id, 100)
+        print(files_list, cache.get(request_id))
+    """вызов загрузчика данных в базу из файла"""
     print('four', DataLoader(files_list).load())
-    #print(files_list) #path_n_filename.rsplit('.', 1)[1]
 
 
 def update_progress_bar(request):
-    if request.method == 'GET' and request.GET.get('state'):
-        #print(request.GET['state'])
-        if int(request.GET['state']) < 100:
-            progress = int(request.GET['state'])+1
-            return JsonResponse(data={'data_progress': progress})
+    if cache.get(request.GET.get('id')):
+        if cache.get(request.GET.get('id')) < 100:
+            return JsonResponse(data={
+                'percent': cache.get(request.GET.get('id')),
+                'status': 'loading',
+                'id': request.GET.get('id')})
         else:
-            return JsonResponse(data={'data_progress': 101, 'cache': 'erase'})
+            return JsonResponse(data={'percent': 100, 'status': 'done', 'id': request.GET.get('id')})
     else:
-        return JsonResponse(data={'data_progress': 101, 'cache': 'erase'})
+        return JsonResponse(data={'percent': 0, 'status': 'error', 'id': request.GET.get('id')})
 
 
 def test(request):
     form = FileFieldForm(request.POST, request.FILES)
-    #print(FileReader(['text.xls']).xls_reader())
     if request.method == 'GET':
         return render(request, 'counters/test.html', {'form': form})
     else:
+        data = {}
         if form.is_valid():
-            handle_uploaded_file(request.FILES)
-            files = request.FILES.getlist('file_field')
-            for file in files:
-                print(file)
-
-            data = {'is_valid': True, 'name': 'asd', 'url': '/'}
-
+            """id from file_upload.js"""
+            handle_uploaded_file(request.FILES, request_id=request.POST['id'])
+            if cache.get(request.POST.get('id')):
+                data['file_load'] = 'ok'
+            else:
+                data['file_load'] = 'not process'
         else:
-            #print(form.errors)
-            data = {'is_valid': False}
+            data['file_load'] = 'form_error'
         return JsonResponse(data)

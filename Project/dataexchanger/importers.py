@@ -12,12 +12,12 @@ class FileReader:
             'xls': self.xls_reader,
             'xlsx': self.xlsx_reader,
         }
-        self.rows = []
+        self.rows_gen = None
 
         for file in files_list:
             extension = file.rsplit('.', 1)[1]
             try:
-                self.rows = self.extensions_readers[extension](file)
+                self.rows_gen = self.extensions_readers[extension](file)
                 self.result['loading status'] = 'OK'
             except KeyError as e:
                 print(str(e))
@@ -60,7 +60,7 @@ class DataLoader(FileReader):
             return True
 
     def load(self):
-        for row in self.rows:
+        for row in self.rows_gen:
             counter_row = LoadFormat(row).get_formatted_data()
             if counter_row['day_data'] or counter_row['night_data']:
                 if not self.buffer(counter_row):
