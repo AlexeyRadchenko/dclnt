@@ -24,6 +24,10 @@ $( document ).ready(function() {
                 //setTimeout(progressbarUpdate(0);
                 progressbarUpdate(id);
             }
+            else
+            {
+                console.log('blya');
+            }
         });
     };
 
@@ -42,11 +46,17 @@ $( document ).ready(function() {
                 $('.progress-bar').css(
                 'width', data['percent']+'%').attr(
                     'aria-valuenow', data['percent']).text(data['percent']+'%');
-                /*
+
                 setTimeout(function() {
-                    progressbarUpdate(data['percent']);
-                }, 10);*/
-                progressbarUpdate(id);
+                    progressbarUpdate(id);
+                }, 500);
+                //progressbarUpdate(id);
+            }else if (data['status'] === 'done'){
+                $('.progress-bar').css(
+                'width', data['percent']+'%').attr(
+                    'aria-valuenow', data['percent']).text(data['percent']+'%');
+            }else{
+                console.log(data)
             }
 
         });

@@ -1,34 +1,31 @@
+#from celery import current_task
+
 from counters.models import Counters, Accounts, User
+from django.core.cache import cache
+
 from .formats import LoadFormat
 from Project import settings
 import xlrd
 
 
 class FileReader:
-
-    def __init__(self, files_list):
+    def __init__(self):
         self.result = {}
         self.extensions_readers = {
             'xls': self.xls_reader,
             'xlsx': self.xlsx_reader,
         }
         self.rows_gen = None
+        self.rows_num = None
 
-        for file in files_list:
-            extension = file.rsplit('.', 1)[1]
-            try:
-                self.rows_gen = self.extensions_readers[extension](file)
-                self.result['loading status'] = 'OK'
-            except KeyError as e:
-                print(str(e))
-                self.result['loading status'] = 'Error'
-                self.result['error'] = 'Unknown format'
-
-    @staticmethod
-    def xls_reader(file):
-        sheet = xlrd.open_workbook(file, formatting_info=True).sheet_by_index(0)
-        for row_num in range(1, sheet.nrows):
+    def create_rows_generator(self, sheet):
+        for row_num in range(1, self.rows_num):
             yield sheet.row_values(row_num)
+
+    def xls_reader(self, file):
+        xls_sheet = xlrd.open_workbook(file, formatting_info=True).sheet_by_index(0)
+        self.rows_num = xls_sheet.nrows
+        return self.create_rows_generator(xls_sheet)
 
     @staticmethod
     def xlsx_reader(file):
@@ -36,9 +33,32 @@ class FileReader:
 
 
 class DataLoader(FileReader):
-    def __init__(self, files_list):
-        super().__init__(files_list)
+    def __init__(self, files_list, process_id):
+        super().__init__()
         self.counter_buffer = None
+        self.process_id = process_id
+        self.progress_step = 0
+        self.progress = 0
+        read_num = 0
+        for file in files_list:
+            extension = file.rsplit('.', 1)[1]
+            print(cache.get(process_id))
+            try:
+                self.rows_gen = self.extensions_readers[extension](file)
+                self.progress_step = (100 - self.progress) / (len(files_list) - read_num) / (self.rows_num - 1)
+                print('rasch', self.progress_step, (len(files_list) - read_num), self.rows_num - 1)
+                self.load()
+                self.result['loading status'] = 'OK'
+
+            except KeyError as e:
+                print(str(e))
+                self.result['loading status'] = 'Error'
+                self.result['error'] = 'Unknown format'
+            read_num += 1
+
+        if read_num == len(files_list) and cache.get(self.process_id) < 100:
+            cache.set(self.process_id, 100)
+
 
     """
     Данные о двухтарифном счетчике приходят ввиде двух строк
@@ -58,6 +78,14 @@ class DataLoader(FileReader):
             else:
                 self.counter_buffer['day_data'] = data['day_data']
             return True
+
+    def loading_progress(self):
+        self.progress += self.progress_step
+        cache.set(self.process_id, round(self.progress))
+        """
+        current_task.update_state(state=self.process_id,
+            meta={'current': self.progress, 'total': 100})"""
+        print('load', cache.get(self.process_id))
 
     def load(self):
         for row in self.rows_gen:
@@ -96,10 +124,13 @@ class DataLoader(FileReader):
                         'date_update': counter_row['last_date'],
                     }
                 )
-
                 if acc_created:
                     user = User(id=counter_row['account'], username=counter_row['account'])
                     user.set_password(settings.USERS_PASS)
                     user.save()
             else:
                 Accounts.objects.filter(id=counter_row['account']).update(date_update=counter_row['last_date'])
+            self.loading_progress()
+        print('final', self.progress)
+
+

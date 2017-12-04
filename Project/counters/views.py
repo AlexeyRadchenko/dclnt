@@ -1,13 +1,14 @@
 from django.http import JsonResponse
 from django.shortcuts import render
+from counters.tasks import load_files
 from .forms import FileFieldForm
 from django.conf import settings
 from django.core.cache import cache
-from dataexchanger.importers import FileReader, DataLoader
+
 
 
 """USer django-debug-toolbar"""
-def handle_uploaded_file(files, request_id):
+def handle_uploaded_file(files, process_id=None):
     files_list = []
     for f in files.getlist('file_field'):
         path_n_filename = ''.join([settings.MEDIA_ROOT, '/import/', f.name])
@@ -16,11 +17,10 @@ def handle_uploaded_file(files, request_id):
                 destination.write(chunk)
 
         files_list.append(path_n_filename)
-        cache.set(request_id, 100)
-        print(files_list, cache.get(request_id))
-    """вызов загрузчика данных в базу из файла"""
-    print('four', DataLoader(files_list).load())
+    cache.set(process_id, 1, timeout=None)
 
+    """вызов загрузчика данных в базу из файла"""
+    load_files.delay(files_list, process_id)
 
 def update_progress_bar(request):
     if cache.get(request.GET.get('id')):
@@ -43,7 +43,7 @@ def test(request):
         data = {}
         if form.is_valid():
             """id from file_upload.js"""
-            handle_uploaded_file(request.FILES, request_id=request.POST['id'])
+            handle_uploaded_file(request.FILES, process_id=request.POST['id'])
             if cache.get(request.POST.get('id')):
                 data['file_load'] = 'ok'
             else:
