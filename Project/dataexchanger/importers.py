@@ -1,6 +1,6 @@
 from counters.models import Counters, Accounts, User
 from django.core.cache import cache
-from .formats import LoadFormat
+from .formats import ExcelLoadFormat
 from Project import settings
 import xlrd
 
@@ -8,9 +8,13 @@ import xlrd
 class FileReader:
     def __init__(self):
         self.result = {}
-        self.extensions_readers = {
+        self.reader_selector = {
             'xls': self.xls_reader,
             'xlsx': self.xlsx_reader,
+        }
+        self.row_format_selector = {
+            'xls': ExcelLoadFormat,
+            'xlsx': ExcelLoadFormat,
         }
         self.rows_gen = None
         self.rows_num = None
@@ -24,13 +28,14 @@ class FileReader:
         self.rows_num = xls_sheet.nrows
         return self.create_rows_generator(xls_sheet)
 
-    def xlsx_reader(file):
+    def xlsx_reader(self, file):
         return
 
 
 class DataLoader(FileReader):
     def __init__(self, files_list, process_id):
         super().__init__()
+        self.row_format = None
         self.counter_buffer = None
         self.process_id = process_id
         self.progress_step = 0
@@ -40,7 +45,8 @@ class DataLoader(FileReader):
         for file in files_list:
             extension = file.rsplit('.', 1)[1]
             try:
-                self.rows_gen = self.extensions_readers[extension](file)
+                self.rows_gen = self.reader_selector[extension](file)
+                self.row_format = self.row_format_selector[extension]
                 self.progress_step = (100 - self.progress) / (len(files_list) - read_num) / (self.rows_num - 1)
                 self.load()
                 self.result['loading status'] = 'OK'
@@ -91,7 +97,10 @@ class DataLoader(FileReader):
                 'counter_data_simple': counter_row['simple_data'],
                 'counter_data_day': counter_row['day_data'],
                 'counter_data_night': counter_row['night_data'],
-                'date_update': counter_row['last_date']
+                'old_counter_data_simple': counter_row['simple_data'],
+                'old_counter_data_day': counter_row['day_data'],
+                'old_counter_data_night': counter_row['day_data'],
+                'date_update': counter_row['last_date'],
             }
         )
 
@@ -115,7 +124,7 @@ class DataLoader(FileReader):
 
     def load(self):
         for row in self.rows_gen:
-            counter_row = LoadFormat(row).get_formatted_data()
+            counter_row = self.row_format(row).get_formatted_data()
 
             if counter_row['day_data'] or counter_row['night_data']:
                 if not self.buffer(counter_row):

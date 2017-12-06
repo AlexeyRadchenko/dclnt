@@ -2,7 +2,7 @@ import re
 from datetime import datetime
 
 
-class LoadFormat:
+class ExcelLoadFormat:
     def __init__(self, row):
         self.data = {
             'N': int(row[0]),
@@ -20,9 +20,9 @@ class LoadFormat:
             'simple_data': None,
             'day_data': None,
             'night_data': None,
-            'last_date': datetime.now(), #datetime.strptime(row[13].strip(' '), settings.DATE_FORMAT)"""
-            'creation_date':None,
-            'setup_date':None,
+            'last_date': datetime.now(),
+            'creation_date': None,
+            'setup_date': None,
         }
 
     def data_type_checker(self):
@@ -38,9 +38,28 @@ class LoadFormat:
         return self.data
 
 
-class UnloadFormat:
-    pass
+class ExcelUnloadFormat:
+    header = [
+        ('N', 2000),
+        ('Номер', 5000),
+        ('Лицевой счет', 7000),
+        ('Дом', 5000),
+        ('Помещение', 3000),
+        ('Счетчик', 5000),
+        ('Код', 5000),
+        ('Вид показаний', 5000),
+        ('Начальные показания', 7000),
+        ('Конечные показания', 7000),
+        ('Количество', 5000),
+        ('Дата начала показаний', 8000),
+        ('Дата окончания показаний', 8000),
+        ('Дата последних показаний', 8000)
+    ]
+    header_style = "font:name Arial; font: bold on; align: horiz center; pattern: pattern solid, fore_colour gray25;"
 
+
+    def __init__(self, row):
+        pass
 """'000000,833'"""
 """
 row = [1.0,
