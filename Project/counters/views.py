@@ -1,10 +1,9 @@
 from django.http import JsonResponse
 from django.shortcuts import render
-from counters.tasks import load_files
+from counters.tasks import load_files_data_to_db
 from .forms import FileFieldForm
 from django.conf import settings
 from django.core.cache import cache
-
 
 
 """USer django-debug-toolbar"""
@@ -20,7 +19,7 @@ def handle_uploaded_file(files, process_id=None):
     cache.set(process_id, 1, timeout=None)
 
     """вызов загрузчика данных в базу из файла"""
-    load_files.delay(files_list, process_id)
+    load_files_data_to_db.delay(files_list, process_id)
 
 def update_progress_bar(request):
     if cache.get(request.GET.get('id')):

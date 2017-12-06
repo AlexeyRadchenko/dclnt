@@ -4,5 +4,5 @@ from dataexchanger.importers import DataLoader
 
 
 @shared_task
-def load_files(files_list, process_id):
+def load_files_data_to_db(files_list, process_id):
     DataLoader(files_list, process_id)

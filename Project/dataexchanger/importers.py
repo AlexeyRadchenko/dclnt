@@ -1,8 +1,5 @@
-#from celery import current_task
-
 from counters.models import Counters, Accounts, User
 from django.core.cache import cache
-
 from .formats import LoadFormat
 from Project import settings
 import xlrd
@@ -27,7 +24,6 @@ class FileReader:
         self.rows_num = xls_sheet.nrows
         return self.create_rows_generator(xls_sheet)
 
-    @staticmethod
     def xlsx_reader(file):
         return
 
@@ -40,16 +36,14 @@ class DataLoader(FileReader):
         self.progress_step = 0
         self.progress = 0
         read_num = 0
+
         for file in files_list:
             extension = file.rsplit('.', 1)[1]
-            print(cache.get(process_id))
             try:
                 self.rows_gen = self.extensions_readers[extension](file)
                 self.progress_step = (100 - self.progress) / (len(files_list) - read_num) / (self.rows_num - 1)
-                print('rasch', self.progress_step, (len(files_list) - read_num), self.rows_num - 1)
                 self.load()
                 self.result['loading status'] = 'OK'
-
             except KeyError as e:
                 print(str(e))
                 self.result['loading status'] = 'Error'
@@ -79,58 +73,60 @@ class DataLoader(FileReader):
                 self.counter_buffer['day_data'] = data['day_data']
             return True
 
-    def loading_progress(self):
+    def update_n_write_progress(self):
         self.progress += self.progress_step
         cache.set(self.process_id, round(self.progress))
-        """
-        current_task.update_state(state=self.process_id,
-            meta={'current': self.progress, 'total': 100})"""
-        print('load', cache.get(self.process_id))
+
+    @staticmethod
+    def write_row_data_to_db(counter_row):
+        counter_obj, counter_created = Counters.objects.update_or_create(
+            id_out_system=counter_row['id_from_out_db'],
+            in_work=True,
+            counter_type=counter_row['type_counter'],
+            serial_number=counter_row['serial_number'],
+            account_id=Accounts(id=counter_row['account']),
+            defaults={
+                'setup_date': counter_row['setup_date'],
+                'creation_date': counter_row['creation_date'],
+                'counter_data_simple': counter_row['simple_data'],
+                'counter_data_day': counter_row['day_data'],
+                'counter_data_night': counter_row['night_data'],
+                'date_update': counter_row['last_date']
+            }
+        )
+
+        if counter_created:
+            acc_obj, acc_created = Accounts.objects.update_or_create(
+                id=counter_row['account'],
+                street=counter_row['street'],
+                house_number=counter_row['house_number'],
+                apartments_number=counter_row['apartments'],
+                user=User(id=counter_row['account'], username=counter_row['account']),
+                defaults={
+                    'date_update': counter_row['last_date'],
+                }
+            )
+            if acc_created:
+                user = User(id=counter_row['account'], username=counter_row['account'])
+                user.set_password(settings.USERS_PASS)
+                user.save()
+        else:
+            Accounts.objects.filter(id=counter_row['account']).update(date_update=counter_row['last_date'])
 
     def load(self):
         for row in self.rows_gen:
             counter_row = LoadFormat(row).get_formatted_data()
+
             if counter_row['day_data'] or counter_row['night_data']:
                 if not self.buffer(counter_row):
                     continue
                 else:
                     counter_row = self.counter_buffer
 
-            counter_obj, counter_created = Counters.objects.update_or_create(
-                id_out_system=counter_row['id_from_out_db'],
-                in_work=True,
-                counter_type=counter_row['type_counter'],
-                serial_number=counter_row['serial_number'],
-                account_id=Accounts(id=counter_row['account']),
-                defaults={
-                    'setup_date': counter_row['setup_date'],
-                    'creation_date': counter_row['creation_date'],
-                    'counter_data_simple': counter_row['simple_data'],
-                    'counter_data_day': counter_row['day_data'],
-                    'counter_data_night': counter_row['night_data'],
-                    'date_update': counter_row['last_date']
-                }
-            )
+            self.write_row_data_to_db(counter_row)
+            self.update_n_write_progress()
             self.counter_buffer = None
 
-            if counter_created:
-                acc_obj, acc_created = Accounts.objects.update_or_create(
-                    id=counter_row['account'],
-                    street=counter_row['street'],
-                    house_number=counter_row['house_number'],
-                    apartments_number=counter_row['apartments'],
-                    user=User(id=counter_row['account'], username=counter_row['account']),
-                    defaults={
-                        'date_update': counter_row['last_date'],
-                    }
-                )
-                if acc_created:
-                    user = User(id=counter_row['account'], username=counter_row['account'])
-                    user.set_password(settings.USERS_PASS)
-                    user.save()
-            else:
-                Accounts.objects.filter(id=counter_row['account']).update(date_update=counter_row['last_date'])
-            self.loading_progress()
-        print('final', self.progress)
+
 
 
