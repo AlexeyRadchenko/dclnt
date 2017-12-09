@@ -59,13 +59,11 @@ class DataLoader(FileReader):
         if read_num == len(files_list) and cache.get(self.process_id) < 100:
             cache.set(self.process_id, 100)
 
-
-    """
-    Данные о двухтарифном счетчике приходят ввиде двух строк
-    100004655|Электроэнергия|10001482|Свет (день)|005547
-    100004655|Электроэнергия|10001482|Свет (ночь)|005691
-    буфер для приведения записи к виду 
-    100004655|Электроэнергия|10001482|005547|005691
+    """ Данные о двухтарифном счетчике приходят ввиде двух строк
+        100004655|Электроэнергия|10001482|Свет (день)|005547
+        100004655|Электроэнергия|10001482|Свет (ночь)|005691
+        буфер для приведения записи к виду 
+        100004655|Электроэнергия|10001482|005547|005691
     """
 
     def buffer(self, data):
@@ -112,6 +110,7 @@ class DataLoader(FileReader):
                 apartments_number=counter_row['apartments'],
                 user=User(id=counter_row['account'], username=counter_row['account']),
                 defaults={
+                    'name': counter_row['name'],
                     'date_update': counter_row['last_date'],
                 }
             )

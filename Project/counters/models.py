@@ -9,6 +9,7 @@ class Accounts(models.Model):
     street = models.CharField(max_length=100, verbose_name='Улица')
     house_number = models.CharField(max_length=10, verbose_name='Дом')
     apartments_number = models.CharField(max_length=10, blank=True, null=True, verbose_name='Квартира')
+    name = models.CharField(max_length=100, blank=True, null=True, verbose_name='Имя')
     user = models.OneToOneField(User, to_field='username', on_delete=models.CASCADE, blank=True)
     date_update = models.DateField(blank=True, null=True, verbose_name='Дата последнего обновления')
 

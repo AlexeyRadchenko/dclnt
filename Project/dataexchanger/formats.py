@@ -23,6 +23,7 @@ class ExcelLoadFormat:
             'last_date': datetime.now(),
             'creation_date': None,
             'setup_date': None,
+            'name': row[2].strip(' ')
         }
 
     def data_type_checker(self):
@@ -56,7 +57,6 @@ class ExcelUnloadFormat:
         ('Дата последних показаний', 8000)
     ]
     header_style = "font:name Arial; font: bold on; align: horiz center; pattern: pattern solid, fore_colour gray25;"
-
 
     def __init__(self, row):
         pass
