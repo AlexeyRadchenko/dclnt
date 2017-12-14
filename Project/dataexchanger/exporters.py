@@ -1,7 +1,8 @@
 import xlwt
-from formats import ExcelUnloadFormat
+from .formats_io import ExcelUnloadFormat
 from counters.models import Counters, Accounts
 from datetime import date
+from django.conf import settings
 
 
 class FileWriter:
@@ -38,8 +39,8 @@ class DataUnloader(FileWriter):
     def __init__(
             self,
             file_extension,
-            month,
-            year,
+            #month,
+            #year,
             account=None,
             street=None,
             house_number=None,
@@ -54,51 +55,92 @@ class DataUnloader(FileWriter):
         self.apartments = apartments
         self.counters_type = counters_type
         self.separated_of_counters_type = separated_of_counters_type
-        self.month = month
-        self.year = year
+        self.month = date.today().month
+        self.year = date.today().year
         self.writer = self.writers_selector[file_extension]()
         self.unload()
 
-    def get_account_data_form_db(self):
-        if self.account:
-            pass
+    def db_data_to_row_data(self, num_row, db_data):
+        counter_type, type_data, current_value, old_value = None, None, None, None
+        if db_data['counter_type'] == 'Электроэнергия':
+            counter_type = db_data['counter_type']
+            if db_data['counter_data_day']:
+                type_data = 'Свет (день)'
+                current_value = db_data['counter_data_day']
+                old_value = db_data['old_counter_data_day']
+            elif db_data['counter_data_night']:
+                type_data = 'Свет (ночь)'
+                current_value = db_data['counter_data_night']
+                old_value = db_data['old_counter_data_night']
+            else:
+                type_data = 'Обычные'
+                current_value = db_data['counter_data_simple']
+                old_value = db_data['old_counter_data_simple']
+        else:
+            type_data = 'Обычные'
+            counter_type = '{0}{1}'.format(db_data['counter_type'], db_data['serial_number'])
+            current_value = db_data['counter_data_simple']
+            old_value = db_data['old_counter_data_simple']
+        row = [
+            num_row,
+            db_data['account_id'],
+            db_data['account_id__name'],
+            '{0},{1}'.format(
+                db_data['account_id__street'], db_data['account_id__house_number']
+            ),
+            db_data['account_id__apartments_number'],
+            counter_type,
+            db_data['id_out_system'],
+            type_data,
+            old_value,
+            current_value,
+            xlwt.Formula('J{0}-I{0}'.format(num_row+1)),
+            '01.09.2017',
+            '30.09.2017',
+            db_data['date_update'],
 
-    def get_counter_data_from_db(self):
-        pass
+        ]
+        return row
 
     def get_data_from_db(self):
-        """
-        Counters.objects.values(
-            'account',
-            'name',
-            'street',
-            'house_number',
-            'apartments',
-            'counter'
-        )"""
-        counters_objects = Counters.objects.filter(
-            date_update__year=date.today().year,
-            date_update__month=date.today().month
-        ).annotate(
-            name=Accounts('name'),
-            street=Accounts('street'),
-            house_number=Accounts('house_number'),
-            apartments=Accounts('apartments'),
+        counters_objects = Counters.objects.select_related(
+            'account_id'
+        ).filter(
+            date_update__year=self.year,
+            date_update__month=self.month,
+            #in_work=True
+        ).values(
+            'account_id',
+            'account_id__name',
+            'account_id__street',
+            'account_id__house_number',
+            'account_id__apartments_number',
+            'counter_type',
+            'id_out_system',
+            'serial_number',
+            'counter_data_simple',
+            'counter_data_day',
+            'counter_data_night',
+            'old_counter_data_simple',
+            'old_counter_data_day',
+            'old_counter_data_night',
+            'date_update'
         )
-        for counter in counters_objects:
-            print(counter.account_id, counter.street)
+
+        return counters_objects
 
     def unload(self):
         if not self.counters_type and not self.separated_of_counters_type:
-            pass
+            db_data = self.get_data_from_db()
+            book, sheet = self.writer
+            for row, data in enumerate(db_data, start=1):
+                row_data = self.db_data_to_row_data(row, data)
+                for column, cell_value in enumerate(row_data):
+                    sheet.write(row, column, cell_value)
+            book.save(settings.BASE_DIR+'/media/export/sd.xls')
         elif self.counters_type:
+            print('dva')
             pass
         elif self.separated_of_counters_type:
+            print('tri')
             pass
-
-counters = Counters.objects.filter(
-            date_update__year=date.today().year,
-            date_update__month=date.today().month
-        )
-for counter in counters:
-    print(counter)

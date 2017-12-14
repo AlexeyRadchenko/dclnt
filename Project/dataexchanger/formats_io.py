@@ -57,9 +57,11 @@ class ExcelUnloadFormat:
         ('Дата последних показаний', 8000)
     ]
     header_style = "font:name Arial; font: bold on; align: horiz center; pattern: pattern solid, fore_colour gray25;"
+    formula = None
 
     def __init__(self, row):
         pass
+
 """'000000,833'"""
 """
 row = [1.0,

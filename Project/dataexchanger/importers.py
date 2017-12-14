@@ -1,6 +1,6 @@
 from counters.models import Counters, Accounts, User
 from django.core.cache import cache
-from .formats import ExcelLoadFormat
+from .formats_io import ExcelLoadFormat
 from Project import settings
 import xlrd
 

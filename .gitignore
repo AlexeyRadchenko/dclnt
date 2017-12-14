@@ -1,0 +1,7 @@
+.idea/
+otusenv/
+__pycache__/
+lesson1/pyramid/
+lesson3/pyramid/
+**/__pycache__/**
+!**/__pycache__/**/
