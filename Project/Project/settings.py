@@ -18,6 +18,9 @@ class BASE(Configuration):
         'django.contrib.staticfiles',
         'debug_toolbar',
         'counters',
+        'management',
+        'rest_framework',
+        'api_v0',
     ]
 
     MIDDLEWARE = [
@@ -36,7 +39,7 @@ class BASE(Configuration):
     TEMPLATES = [
         {
             'BACKEND': 'django.template.backends.django.DjangoTemplates',
-            'DIRS': [],
+            'DIRS': [os.path.join(BASE_DIR, 'templates')],
             'APP_DIRS': True,
             'OPTIONS': {
                 'context_processors': [
@@ -53,14 +56,6 @@ class BASE(Configuration):
 
     DATABASES = values.DatabaseURLValue('sqlite:///%s' % os.path.join(BASE_DIR, 'db.sqlite3'),
                                         environ=True)
-    """
-    DATABASES = {
-        'default': {
-            'ENGINE': 'django.db.backends.sqlite3',
-            'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
-        }
-    }
-    """
 
     AUTH_PASSWORD_VALIDATORS = [
         {
@@ -76,6 +71,12 @@ class BASE(Configuration):
             'NAME': 'django.contrib.auth.password_validation.NumericPasswordValidator',
         },
     ]
+
+    REST_FRAMEWORK = {
+        'DEFAULT_RENDERER_CLASSES': (
+            'rest_framework.renderers.JSONRenderer',
+        )
+    }
 
     LANGUAGE_CODE = 'ru-RU'
 
@@ -104,18 +105,8 @@ class BASE(Configuration):
     REDIS_PORT = '6379'
 
     CACHES = values.CacheURLValue(f'redis://{REDIS_HOST}:{REDIS_PORT}/0')
-    """
-    CACHES = {
-        "default": {
-            "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": 'redis://' + REDIS_HOST + ':' + REDIS_PORT + '/0',
-            "OPTIONS": {
-                "CLIENT_CLASS": "django_redis.client.DefaultClient",
-            }
-        }
-    }"""
 
-    # CELERY
+    # CELERY settings
     CELERY_BROKER_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}/0'
     CELERY_RESULT_BACKEND = f'redis://{REDIS_HOST}:{REDIS_PORT}/0'
 

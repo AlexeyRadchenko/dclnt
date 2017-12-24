@@ -1,0 +1,29 @@
+{% extends 'base.html' %}
+{% load static %}
+{% block head %}
+{{ block.super }}
+    <!--management_css-->
+    <link rel="stylesheet" href="{% static 'css/management/login.css' %}">
+    <!--management_end-->
+    <!--js-->
+    <script src="{% static "js/management/login.js" %}"></script>
+    <!--js_end-->
+{% endblock %}
+{% block content %}
+<div class="container">
+    <form class="form-signin">
+        {% csrf_token %}
+        <h2 class="form-signin-heading">Please sign in</h2>
+        <label for="inputLogin" class="sr-only">User</label>
+            <input type="text" id="inputLogin" name="user" class="form-control" placeholder="User" required autofocus>
+        <label for="inputPassword" class="sr-only">Password</label>
+            <input type="password" id="inputPassword" name="password" class="form-control" placeholder="Password" required>
+        <div class="checkbox">
+            <label>
+                <input type="checkbox" value="remember-me"> Remember me
+            </label>
+        </div>
+        <button class="btn btn-lg btn-primary btn-block" type="submit" id="signinbutton">Sign in</button>
+    </form>
+</div>
+{% endblock %}

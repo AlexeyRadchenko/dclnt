@@ -40,14 +40,16 @@ class DataLoader(FileReader):
         self.process_id = process_id
         self.progress_step = 0
         self.progress = 0
-        read_num = 0
+        self.files_list = files_list
 
-        for file in files_list:
+    def start_loading(self):
+        read_num = 0
+        for file in self.files_list:
             extension = file.rsplit('.', 1)[1]
             try:
                 self.rows_gen = self.reader_selector[extension](file)
                 self.row_format = self.row_format_selector[extension]
-                self.progress_step = (100 - self.progress) / (len(files_list) - read_num) / (self.rows_num - 1)
+                self.progress_step = (100 - self.progress) / (len(self.files_list) - read_num) / (self.rows_num - 1)
                 self.load()
                 self.result['loading status'] = 'OK'
             except KeyError as e:
@@ -56,7 +58,7 @@ class DataLoader(FileReader):
                 self.result['error'] = 'Unknown format'
             read_num += 1
 
-        if read_num == len(files_list) and cache.get(self.process_id) < 100:
+        if read_num == len(self.files_list) and cache.get(self.process_id) < 100:
             cache.set(self.process_id, 100)
 
     """ Данные о двухтарифном счетчике приходят ввиде двух строк
@@ -119,7 +121,10 @@ class DataLoader(FileReader):
                 user.set_password(settings.USERS_PASS)
                 user.save()
         else:
-            Accounts.objects.filter(id=counter_row['account']).update(date_update=counter_row['last_date'])
+            Accounts.objects.filter(id=counter_row['account']).update(
+                date_update=counter_row['last_date'],
+                name=counter_row['name']
+            )
 
     def load(self):
         for row in self.rows_gen:

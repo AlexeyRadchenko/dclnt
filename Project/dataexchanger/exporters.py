@@ -58,49 +58,6 @@ class DataUnloader(FileWriter):
         self.month = date.today().month
         self.year = date.today().year
         self.writer = self.writers_selector[file_extension]()
-        self.unload()
-
-    def db_data_to_row_data(self, num_row, db_data):
-        counter_type, type_data, current_value, old_value = None, None, None, None
-        if db_data['counter_type'] == 'Электроэнергия':
-            counter_type = db_data['counter_type']
-            if db_data['counter_data_day']:
-                type_data = 'Свет (день)'
-                current_value = db_data['counter_data_day']
-                old_value = db_data['old_counter_data_day']
-            elif db_data['counter_data_night']:
-                type_data = 'Свет (ночь)'
-                current_value = db_data['counter_data_night']
-                old_value = db_data['old_counter_data_night']
-            else:
-                type_data = 'Обычные'
-                current_value = db_data['counter_data_simple']
-                old_value = db_data['old_counter_data_simple']
-        else:
-            type_data = 'Обычные'
-            counter_type = '{0}{1}'.format(db_data['counter_type'], db_data['serial_number'])
-            current_value = db_data['counter_data_simple']
-            old_value = db_data['old_counter_data_simple']
-        row = [
-            num_row,
-            db_data['account_id'],
-            db_data['account_id__name'],
-            '{0},{1}'.format(
-                db_data['account_id__street'], db_data['account_id__house_number']
-            ),
-            db_data['account_id__apartments_number'],
-            counter_type,
-            db_data['id_out_system'],
-            type_data,
-            old_value,
-            current_value,
-            xlwt.Formula('J{0}-I{0}'.format(num_row+1)),
-            '01.09.2017',
-            '30.09.2017',
-            db_data['date_update'],
-
-        ]
-        return row
 
     def get_data_from_db(self):
         counters_objects = Counters.objects.select_related(
@@ -108,7 +65,7 @@ class DataUnloader(FileWriter):
         ).filter(
             date_update__year=self.year,
             date_update__month=self.month,
-            #in_work=True
+            in_work=True
         ).values(
             'account_id',
             'account_id__name',
@@ -134,7 +91,7 @@ class DataUnloader(FileWriter):
             db_data = self.get_data_from_db()
             book, sheet = self.writer
             for row, data in enumerate(db_data, start=1):
-                row_data = self.db_data_to_row_data(row, data)
+                row_data = ExcelUnloadFormat(row, data).db_data_to_row_data()
                 for column, cell_value in enumerate(row_data):
                     sheet.write(row, column, cell_value)
             book.save(settings.BASE_DIR+'/media/export/sd.xls')
