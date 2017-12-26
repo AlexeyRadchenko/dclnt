@@ -3,6 +3,8 @@ from django.http import JsonResponse
 from django.views import View
 from django.contrib.auth import authenticate, login, logout
 
+from counters.forms import FileFieldForm
+
 
 class ManagementLogin(View):
     template = 'management/login.html'
@@ -24,7 +26,9 @@ class ManagementOperatorRKC(View):
 
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
-            return render(request, self.template)
+            #form = FileFieldForm(request.POST, request.FILES)
+            form = FileFieldForm()
+            return render(request, self.template, {'form': form})
         else:
             return redirect('management_login')
 

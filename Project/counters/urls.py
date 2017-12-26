@@ -1,6 +1,6 @@
 from django.conf.urls import url
-from .views import test, update_progress_bar
+from .views import StartDevPage
+
 urlpatterns = [
-    url(r'^$', test),
-    url(r'^progressbar_update/$', update_progress_bar),
+    url(r'^$', StartDevPage.as_view()),
 ]

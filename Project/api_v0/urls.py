@@ -1,16 +1,14 @@
-from django.conf.urls import url
+from django.conf.urls import url, include
 from rest_framework import routers
-from rest_framework.urlpatterns import format_suffix_patterns
 
-from .views import ListUsers
+from .views import ListUsers, FileUploadView, UpdateProgressBarView
 
 router = routers.SimpleRouter()
 router.register(r'users', ListUsers, base_name='users')
 
-urlpatterns = router.urls
-print(router.urls)
-"""
-urlpatterns = format_suffix_patterns([
-    #url(r'^$', api_root),
-    url(r'^users/$', ListUsers, name='user-list'),
-])"""
+urlpatterns = [
+    url(r'^upload/$', FileUploadView.as_view()),
+    url(r'^progressbar_update/$', UpdateProgressBarView.as_view()),
+    url(r'^', include(router.urls))
+]
+

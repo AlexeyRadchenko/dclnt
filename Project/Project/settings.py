@@ -113,6 +113,10 @@ class BASE(Configuration):
     DATE_FORMAT = '%d.%m.%Y'
     USERS_PASS = MY_USERS_PASS
 
+    DEBUG_TOOLBAR_CONFIG = {
+        'SHOW_TOOLBAR_CALLBACK': lambda r: False,  # disables it
+        # '...
+    }
 
 class Dev(BASE):
     INTERNAL_IPS = [

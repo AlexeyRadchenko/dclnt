@@ -4,19 +4,19 @@
 <head>
 {% block head %}
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
     <title>Title</title>
-    <!--Bootstrap_css-->
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
-    <!--endBootstrap-->
-
     <!--jquery-->
     <script src="{% static "js/jquery-3.2.1.min.js" %}"></script>
     <!--jquery_end--->
 
     <!--Bootstrap_JS-->
-    <script src="{% static "js/popper.js" %}"></script>
     <script src="{% static "js/bootstrap.min.js" %}"></script>
     <!--endBootstrap_js-->
+
+    <!--Bootstrap_css-->
+    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}">
+    <!--endBootstrap-->
 
     <script src="{% static "js/csrf.js" %}"></script>
 {% endblock %}

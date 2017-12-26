@@ -3,19 +3,34 @@
 {% block head %}
 {{ block.super }}
     <!--js-->
-    <script src="{% static "js/js.cookie.js" %}"></script>
-    <script src="{% static "js/file_upload.js" %}"></script>
+    <!--<script src=""></script>-->
     <!--js_end-->
 {% endblock %}
 {% block content %}
+    <div class="container-fluid">
+        <div class="row" style="margin-top: 15%">
+            <div class="col-md-offset-4 col-md-4" style="display: inline-block;float: none;vertical-align: middle;">
+                <h1 align="center">Страница для разработки</h1>
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-offset-4 col-md-4" style="align-content: center">
+                <h2 align="center">Роли пользователей</h2>
+                <div class="row" id="btns">
+                    <div class="col-md-4 text-center"><a href="#" class="btn btn-default">Жилец</a></div>
+                    <div class="col-md-4 text-center"><a href="#" class="btn btn-default">Диспетчер</a></div>
+                    <div class="col-md-4 text-center"><a href="/management/{{ user }}" class="btn btn-default">Сотрудник РКЦ</a></div>
+                </div>
+            </div>
+        </div>
+    </div>
+<style>
+    body {
+        background: url("/static/img/maintain-icon.png") ;
+    }
+    #btns{
+        margin-top: 30px;
+    }
 
-<form action="/" method="post" id="file-upload-form" enctype="multipart/form-data"> {% csrf_token %}
-    {{ form.file_field }}
-    <button type="submit" class="btn btn-primary" id='upload-btn'>Upload</button>
-</form>
-
-    <div class="progress" style="width: 50%">
-  <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-</div>
-
+</style>
 {% endblock %}

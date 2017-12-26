@@ -10,10 +10,11 @@ $( document ).ready(function() {
 
     var submitForm = function (id) {
         var form_data = new FormData($('#file-upload-form')[0]);
+        console.log($('#file-upload-form')[0]);
         form_data.append('id', id);
         //console.log(form_data);
         $.ajax({
-            url: "/",
+            url: "/api_v0/upload/",
             data: form_data,
             contentType: false,
             processData: false,
@@ -26,7 +27,7 @@ $( document ).ready(function() {
             }
             else
             {
-                console.log('blya');
+                console.log('bl');
             }
         });
     };
@@ -34,7 +35,7 @@ $( document ).ready(function() {
 
     var progressbarUpdate = function(id){
         $.getJSON({
-            url:'/progressbar_update/',
+            url:'/api_v0/progressbar_update/',
             data:{
                 'percent':0,
                 'id':id,
@@ -67,11 +68,19 @@ $( document ).ready(function() {
 
     $('#upload-btn').click(function (e) {
         e.preventDefault();
-        var id = ID()
+        var id = ID();
         submitForm(id);
 
 
 
     });
+
+    //----------------------------------
+
+
+    //----------------------------------
+
+
+
 
 });
