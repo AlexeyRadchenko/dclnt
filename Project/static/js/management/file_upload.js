@@ -10,7 +10,6 @@ $( document ).ready(function() {
 
     var submitForm = function (id) {
         var form_data = new FormData($('#file-upload-form')[0]);
-        console.log($('#file-upload-form')[0]);
         form_data.append('id', id);
         //console.log(form_data);
         $.ajax({
@@ -20,14 +19,14 @@ $( document ).ready(function() {
             processData: false,
             type: 'POST'
         }).done(function (msg) {
-            console.log(msg);
+            //console.log(msg);
             if (msg['file_load'] === 'ok'){
                 //setTimeout(progressbarUpdate(0);
                 progressbarUpdate(id);
             }
             else
             {
-                console.log('bl');
+                console.log(msg);
             }
         });
     };

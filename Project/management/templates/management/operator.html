@@ -45,7 +45,11 @@
                 <li><a data-toggle="tab" href="#upload">Загрузить данные</a></li>
                 <li><a data-toggle="tab" href="#download">Выгрузить данные</a></li>
                 <li><a data-toggle="tab" href="#table">Таблица</a></li>
+                <div class="menublank"></div>
+                <li><a data-toggle="tab" href="#50">50 лет победы, 22</a></li>
             </ul>
+
+
         </div>
 
         <div class="col-sm-11 col-sm-offset-1 col-md-10 col-md-offset-2 main tab-content">
@@ -60,7 +64,7 @@
                     <form class = "form-group" id="file-upload-form" enctype="multipart/form-data">
                     {% csrf_token %}
                         <div class="panel panel-default">
-				            <div class="panel-heading"><strong>Upload files</strong> <small> </small></div>
+				            <div class="panel-heading"><strong>Укажите файл/файлы для загрузки данных</strong> <small> </small></div>
 				            <div class="panel-body">
                                 <div class="input-group image-preview">
                                     <input placeholder="" type="text" class="form-control image-preview-filename" disabled="disabled">
@@ -69,11 +73,12 @@
                                     <!-- image-preview-clear button -->
                                     <button type="button" class="btn btn-default image-preview-clear" style="display:none;"> <span class="glyphicon glyphicon-remove"></span> Clear </button>
                                     <!-- image-preview-input -->
-                                    <div class="btn btn-default image-preview-input"> <span class="glyphicon glyphicon-folder-open"></span> <span class="image-preview-input-title">Browse</span>
-                                        <input type="file" accept="image/png, image/jpeg, image/gif" name="input-file-preview"/>
-                                        <!-- rename it -->
+                                    <div class="btn btn-default image-preview-input"> <span class="glyphicon glyphicon-folder-open"></span> <span class="image-preview-input-title">Выбрать</span>
+                                        <input type="file" name="file_field" multiple id="file" required>
+                                        <!--<input type="file" accept="image/png, image/jpeg, image/gif" name="input-file-preview"/>-->
+                                        <!-- rename it name="file_field"-->
                                     </div>
-                                    <button type="button" class="btn btn-labeled btn-primary"> <span class="btn-label"><i class="glyphicon glyphicon-upload"></i> </span>Upload</button>
+                                    <button type="button" class="btn btn-labeled btn-primary" id="upload-btn"> <span class="btn-label"><i class="glyphicon glyphicon-upload"></i> </span>Загрузить</button>
                                     </span> </div>
                                 <!-- /input-group image-preview [TO HERE]-->
                                 <br />
@@ -82,15 +87,12 @@
                                 <br />
                                 <!-- Progress Bar -->
                                 <div class="progress">
-                                    <div class="progress-bar" role="progressbar" aria-valuenow="60" aria-valuemin="0" aria-valuemax="100" style="width: 60%;"> <span class="sr-only">60% Complete</span> </div>
+                                    <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" style="width: 0%;"> <span class="sr-only">0% Complete</span> </div>
                                 </div>
                                 <br />
                                 </div>
 			            </div>
                     </form>
-                    <div class="progress">
-                      <div class="progress-bar" role="progressbar" style="width: 0%;" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100"></div>
-                    </div>
                 </div>
             </div>
 
@@ -101,6 +103,137 @@
 
             <div id="table" class="tab-pane fade">
                 <h2 class="sub-header">Section title</h2>
+                <div class="table-responsive">
+                <table class="table table-striped">
+                  <thead>
+                    <tr>
+                      <th>#</th>
+                      <th>Header</th>
+                      <th>Header</th>
+                      <th>Header</th>
+                      <th>Header</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    <tr>
+                      <td>1,001</td>
+                      <td>Lorem</td>
+                      <td>ipsum</td>
+                      <td>dolor</td>
+                      <td>sit</td>
+                    </tr>
+                    <tr>
+                      <td>1,002</td>
+                      <td>amet</td>
+                      <td>consectetur</td>
+                      <td>adipiscing</td>
+                      <td>elit</td>
+                    </tr>
+                    <tr>
+                      <td>1,003</td>
+                      <td>Integer</td>
+                      <td>nec</td>
+                      <td>odio</td>
+                      <td>Praesent</td>
+                    </tr>
+                    <tr>
+                      <td>1,003</td>
+                      <td>libero</td>
+                      <td>Sed</td>
+                      <td>cursus</td>
+                      <td>ante</td>
+                    </tr>
+                    <tr>
+                      <td>1,004</td>
+                      <td>dapibus</td>
+                      <td>diam</td>
+                      <td>Sed</td>
+                      <td>nisi</td>
+                    </tr>
+                    <tr>
+                      <td>1,005</td>
+                      <td>Nulla</td>
+                      <td>quis</td>
+                      <td>sem</td>
+                      <td>at</td>
+                    </tr>
+                    <tr>
+                      <td>1,006</td>
+                      <td>nibh</td>
+                      <td>elementum</td>
+                      <td>imperdiet</td>
+                      <td>Duis</td>
+                    </tr>
+                    <tr>
+                      <td>1,007</td>
+                      <td>sagittis</td>
+                      <td>ipsum</td>
+                      <td>Praesent</td>
+                      <td>mauris</td>
+                    </tr>
+                    <tr>
+                      <td>1,008</td>
+                      <td>Fusce</td>
+                      <td>nec</td>
+                      <td>tellus</td>
+                      <td>sed</td>
+                    </tr>
+                    <tr>
+                      <td>1,009</td>
+                      <td>augue</td>
+                      <td>semper</td>
+                      <td>porta</td>
+                      <td>Mauris</td>
+                    </tr>
+                    <tr>
+                      <td>1,010</td>
+                      <td>massa</td>
+                      <td>Vestibulum</td>
+                      <td>lacinia</td>
+                      <td>arcu</td>
+                    </tr>
+                    <tr>
+                      <td>1,011</td>
+                      <td>eget</td>
+                      <td>nulla</td>
+                      <td>Class</td>
+                      <td>aptent</td>
+                    </tr>
+                    <tr>
+                      <td>1,012</td>
+                      <td>taciti</td>
+                      <td>sociosqu</td>
+                      <td>ad</td>
+                      <td>litora</td>
+                    </tr>
+                    <tr>
+                      <td>1,013</td>
+                      <td>torquent</td>
+                      <td>per</td>
+                      <td>conubia</td>
+                      <td>nostra</td>
+                    </tr>
+                    <tr>
+                      <td>1,014</td>
+                      <td>per</td>
+                      <td>inceptos</td>
+                      <td>himenaeos</td>
+                      <td>Curabitur</td>
+                    </tr>
+                    <tr>
+                      <td>1,015</td>
+                      <td>sodales</td>
+                      <td>ligula</td>
+                      <td>in</td>
+                      <td>libero</td>
+                    </tr>
+                  </tbody>
+                </table>
+                </div>
+            </div>
+
+            <div id="50" class="tab-pane fade">
+                <h2 class="sub-header">50 лет победы, 22</h2>
                 <div class="table-responsive">
                 <table class="table table-striped">
                   <thead>

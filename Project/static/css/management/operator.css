@@ -42,7 +42,9 @@ body {
   padding-right: 20px;
   padding-left: 20px;
 }
-.nav-sidebar > .active > a {
+.nav-sidebar > .active > a,
+.nav-sidebar > .active > a:hover,
+.nav-sidebar > .active > a:focus {
   color: #fff;
   background-color: #428bca;
 }
@@ -91,38 +93,14 @@ body {
 .navbar-header p
 {
     position: absolute;
-    width: 100%;
+    width: 400px; /*100%*/
     left: 0;
     top: 0;
     text-align: center;
     font-size: 25px;
     margin-top: 5px;
+    margin-left: 30%;
 }
-
-.btn-file {
-    position: relative;
-    overflow: hidden;
-}
-.btn-file input[type=file] {
-    position: absolute;
-    top: 0;
-    right: 0;
-    min-width: 100%;
-    min-height: 100%;
-    font-size: 100px;
-    text-align: right;
-    filter: alpha(opacity=0);
-    opacity: 0;
-    outline: none;
-    background: white;
-    cursor: inherit;
-    display: block;
-}
-
-[hidden] {
-  display: none !important;
-}
-
 
 
 /* layout.css Style */
@@ -146,7 +124,6 @@ body {
 }
 
 
-
 .image-preview-input {
     position: relative;
     overflow: hidden;
@@ -168,4 +145,13 @@ body {
 }
 .image-preview-input-title {
     margin-left:2px;
+}
+
+.panel-default{
+    margin-top: 30px;
+}
+
+.menublank{
+    display: block;
+    margin-bottom: 30px;
 }
