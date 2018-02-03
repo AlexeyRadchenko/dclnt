@@ -19,7 +19,6 @@ class BASE(Configuration):
         'debug_toolbar',
         'counters',
         'management',
-        'accounts',
         'rest_framework',
         'api_v0',
     ]
