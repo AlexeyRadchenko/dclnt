@@ -52,14 +52,16 @@ class DataLoader(FileReader):
                 self.progress_step = (100 - self.progress) / (len(self.files_list) - read_num) / (self.rows_num - 1)
                 self.load()
                 self.result['loading status'] = 'OK'
+                read_num += 1
             except KeyError as e:
                 print(str(e))
                 self.result['loading status'] = 'Error'
                 self.result['error'] = 'Unknown format'
-            read_num += 1
 
         if read_num == len(self.files_list) and cache.get(self.process_id) < 100:
             cache.set(self.process_id, 100)
+        else:
+            cache.set(self.process_id, 404)
 
     """ Данные о двухтарифном счетчике приходят ввиде двух строк
         100004655|Электроэнергия|10001482|Свет (день)|005547

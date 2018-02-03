@@ -11,4 +11,3 @@ urlpatterns = [
     url(r'^progressbar_update/$', UpdateProgressBarView.as_view()),
     url(r'^', include(router.urls))
 ]
-

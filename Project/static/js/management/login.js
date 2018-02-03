@@ -5,7 +5,6 @@ $( document ).ready(function() {
 
     var submitForm = function () {
         var form_data = new FormData($('.form-signin')[0]);
-        console.log();
         $.ajax({
             url: "/management/login/",
             data: form_data,
@@ -14,6 +13,7 @@ $( document ).ready(function() {
             type: 'POST'
         }).done(function (msg) {
             if (msg['ok']){
+                console.log(msg);
                 window.location = msg['ok'];
             }else
             {

@@ -67,6 +67,9 @@ $( document ).ready(function() {
 
     $('#upload-btn').click(function (e) {
         e.preventDefault();
+        $('.progress-bar').css(
+                'width', 0+'%').attr(
+                    'aria-valuenow', 0).text(0+'%');
         var id = ID();
         submitForm(id);
 

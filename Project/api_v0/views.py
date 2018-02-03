@@ -1,15 +1,15 @@
 from django.contrib.auth.models import User
-
-from rest_framework.parsers import FileUploadParser, MultiPartParser, FormParser
+from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
-from rest_framework import authentication, permissions
+from rest_framework import permissions
 from counters.forms import FileFieldForm
 from .serializers import UserSerializer
 from django.core.cache import cache
 from django.conf import settings
 from counters.tasks import load_files_data_to_db
+
 
 class ListUsers(ModelViewSet):
     permission_classes = (permissions.IsAuthenticated,)
@@ -56,13 +56,26 @@ class UpdateProgressBarView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request):
-        if cache.get(request.GET.get('id')):
-            if cache.get(request.GET.get('id')) < 100:
+        loading_task = cache.get(request.GET.get('id'))
+        if loading_task and loading_task != 404:
+            if loading_task < 100:
                 return Response(data={
-                    'percent': cache.get(request.GET.get('id')),
+                    'percent': loading_task,
                     'status': 'loading',
                     'id': request.GET.get('id')})
             else:
                 return Response(data={'percent': 100, 'status': 'done', 'id': request.GET.get('id')})
         else:
             return Response(data={'percent': 0, 'status': 'error', 'id': request.GET.get('id')})
+
+
+class GetAccountFormAndData (APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    parser_classes = (FormParser,)
+
+    def get(self, request):
+        pass
+
+    def post(self, request):
+        pass
+
