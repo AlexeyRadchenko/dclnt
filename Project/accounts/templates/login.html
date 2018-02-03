@@ -1,0 +1,66 @@
+{% extends "base.html" %}
+{% load staticfiles %}
+{% block head %}
+    {{ block.super }}
+    <!-- Custom styles for this template -->
+    <link href="{% static "css/accounts/login.css"%}" rel="stylesheet">
+    <script src="{% static "js/IE-checker.js"%}"></script>
+    <script src="{% static "js/jquery-3.2.1.min.js"%}"></script>
+    <!--<script src="{% static "js/bootstrap.min.js"%}"></script>-->
+    <script src="{% static "js/alert.js"%}"></script>
+{% endblock %}
+{% block content %}
+<div class="container">
+    <img src="{% static "img/accounts/old_kvitanciya.png" %}" alt="Пример квитанции" class="img-responsive center-block img-thumbnail"/>
+    <p><h4 align="center" class="text_effect">Пожалуйста, введите лицевой счет и адрес, указанный на Вашей квитанции</h4></p><!--Пожалуйста, введите лицевой счет и адрес, указанный на Вашей квитанции-->
+    <form action='.' method='post' class="form-signin">
+      {% csrf_token %}
+        <!--<h4 class="form-signin-heading">Пожалуйста авторизуйтесь</h4>-->
+        <label for="username" class="sr-only">Лицевой счет</label>
+        <input type="text" name="username" value="" id="username" class="form-control" placeholder="Лицевой счет" required autofocus>
+        <!--<label for="password" class="sr-only" >Идентификатор:</label>
+        <input type="password" name="password" value=" " id="password" class="form-control" placeholder="Пароль" required>-->
+        {% if account_error %}
+            <div class="alert alert-danger alert-dismissable" role="alert" id="account-error">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <strong>Ошибка!</strong> {{ account_error }}
+            </div>
+        {% endif %}
+        <input name="password" value="Ifd9_34*zd$fs4J" type="hidden" />
+        <!--<label for="street" class="sr-only">Улица</label>
+        <input type="text" name="street" value="" id="street" class="form-control" placeholder="Улица" required autofocus>-->
+        <select name="street" id="street" required autofocus>
+            <option value="" hidden disabled selected class="placeholder">Улица</option>
+            <option value="Калинина">Калинина</option>
+            <option value="Ленина">Ленина</option>
+            <option value="Космонавтов">Космонавтов</option>
+            <option value="Мира">Мира</option>
+            <option value="50 лет Победы">50 лет Победы</option>
+            <option value="60 лет Октября">60 лет Октября</option>
+            <option value="Советская">Советская</option>
+            <option value="Потапова">Потапова</option>
+            <option value="Строителей">Строителей</option>
+            <option value="Островского">Островского</option>
+            <option value="Кирова">Кирова</option>
+            <option value="Маршала Жукова">Маршала Жукова</option>
+            <option value="Володина">Володина</option>
+            <option value="Карла Маркса">Карла Маркса</option>
+        </select>
+        <label for="house_number" class="sr-only">Номер дома</label>
+        <input type="text" name="house_number" value="" id="house_number" class="form-control" placeholder="Номер дома" required autofocus>
+        <label for="apartments_number" class="sr-only">Номер квартиры</label>
+        <input type="text" name="apartments_number" value="" id="apartments_number" class="form-control" placeholder="Номер квартиры" required autofocus>
+        {% if account_or_address_error %}
+            <div class="alert alert-danger alert-dismissable" role="alert" id="account-error">
+                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                <strong>Ошибка!</strong> {{ account_or_address_error }}
+            </div>
+        {% endif %}
+        <button class="btn btn-lg btn-primary btn-block" type="submit">Войти</button>
+        <input type="hidden" name="next" value="{{ next|escape }}" />
+      </form>
+    {% if account_error or  account_or_address_error %}
+    <div class="row"><a href="/noaccess/" style="text-align: center">я УВЕРЕН, что пишу верный адрес и счет, но получаю ошибки.</a></div>
+    {% endif %}
+</div>
+{% endblock %}

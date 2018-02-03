@@ -18,6 +18,7 @@ class BASE(Configuration):
         'django.contrib.staticfiles',
         'debug_toolbar',
         'counters',
+        'accounts',
         'management',
         'rest_framework',
         'api_v0',
