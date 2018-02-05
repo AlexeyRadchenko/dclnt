@@ -1,4 +1,3 @@
-from django.contrib.auth.decorators import user_passes_test
 from django.shortcuts import render, redirect
 from django.http import JsonResponse
 from django.views import View
@@ -39,6 +38,29 @@ class ManagementOperatorRKC(UserPassesTestMixin, View):
         except ValueError:
             return 0
 
+    @staticmethod
+    def get_houses_list():
+        return Accounts.objects.order_by('street').values('street', 'house_number').distinct()
+
+    def get_apartments_of_house(self, houses):
+        apartments = []
+        for house in houses:
+            accounts = Accounts.objects.filter(
+                street__exact=house['street'],
+                house_number__exact=house['house_number']
+            ).values(
+                'id',
+                'apartments_number'
+            )
+
+            apartments_data = {
+                'house': house,
+                'apartments_data': sorted([(i['apartments_number'], i['id']) for i in accounts],
+                                          key=lambda x: self.str_to_num(x[0])),
+            }
+            apartments.append(apartments_data)
+        return apartments
+
     def check_group(self):
         try:
             group_check = self.request.user.groups.filter(name='dispatchers').exists()
@@ -49,32 +71,11 @@ class ManagementOperatorRKC(UserPassesTestMixin, View):
     def get(self, request, *args, **kwargs):
         if request.user.is_authenticated:
             file_upload_form = FileFieldForm()
-
-            houses = Accounts.objects.order_by(
-                'street'
-            ).values(
-                'street',
-                'house_number'
-            ).distinct()
-
-            house_apartments = []
-            for house in houses:
-                accounts = Accounts.objects.filter(
-                    street__exact=house['street'],
-                    house_number__exact=house['house_number']
-                ).values('id',
-                         'apartments_number'
-                         )
-
-                apartments_data = {
-                    'house': house,
-                    'apartments_data': sorted([(i['apartments_number'], i['id']) for i in accounts],
-                                              key=lambda x: self.str_to_num(x[0])),
-                }
-                house_apartments.append(apartments_data)
+            houses = self.get_houses_list()
+            houses_apartments = self.get_apartments_of_house(houses)
 
             context = {
-                'house_apartments': house_apartments,
+                'house_apartments': houses_apartments,
                 'houses': houses,
                 'form': file_upload_form
             }

@@ -1,14 +1,13 @@
 $( document ).ready(function() {
-    /*$('.nav-tabs a').click(function(){
-        $(this).tab('show');
-    });
 
-    $('ul.li.active').removeClass('active');
-    $('a[href="' + location.pathname + '"]').closest('li').addClass('active');
+    String.prototype.format = String.prototype.f = function(){
+        var args = arguments;
+        return this.replace(/\{(\d+)\}/g, function(m,n){
+            return args[n] ? args[n] : m;
+        });
+    };
 
-    */
 
-    /*menu handler*/
     var removeActive = function() {
         $('nav.a').parents( "li, ul" ).removeClass("active");
     };
@@ -29,11 +28,38 @@ $( document ).ready(function() {
     };
     myRedirect('/management/login/')*/
 
-    var submitForm = function () {
-        //var form_data = new FormData($('.form-signin')[0]);
+    $( ".nav-sidebar a" ).click(function() {
+        console.log();
+        var tub_num = $(this).attr('href')[1];
+        $('#counters-tabs-'+tub_num).empty();
+        //$('#kv_num').empty();
+        $("div.save_form#{0} > H1".f(tub_num)).empty();
+        //$('div.save_form#'+tub_num+' > H1'.f(tub_num)).empty();
+    });
+
+
+    $('.kv_button').click(function () {
+        var index = $(this).parent().attr("id").toString();
+        //var street_number = $('li.active > a').text().split(', ');
+        var apartment = $(this).val();
+        var account = $(this).find('span').text();
+        //console.log(apartment, "div.save_form#"+index, account);
+        $("div.save_form#{0} > H1".f(index)).html("Квартира "+apartment);
+        $("div.save_form#{0} > div > div".f(index)).load("/api_v0/get_account_data/", {account:account, doing:'get'},
+            function (responseText, textStatus, XMLHttpRequest) {
+            if (textStatus == "success") {
+                 //console.log('all good');
+            }
+            if (textStatus == "error") {
+                 //console.log('not good');
+            }
+          }
+        );
+    });
+
+    var LogOut = function () {
         $.ajax({
             url: "/management/user/",
-            //data: form_data,
             contentType: false,
             processData: false,
             type: 'POST'
@@ -44,6 +70,6 @@ $( document ).ready(function() {
 
     $('#log_out').click(function (e) {
         e.preventDefault();
-        submitForm();
+        LogOut();
     });
 });

@@ -1,0 +1,200 @@
+<div class="panel">
+    <div class="panel-heading">
+        <ul class="nav nav-tabs nav-justified cnt" role = "tablist">
+            <li class="active" id="fst">
+                <a href="#watercounters" aria-controls="watercounters" role="tab" data-toggle="tab"><strong>Водосчетчики</strong></a>
+            </li>
+            <li>
+                <a href="#electrocounters" aria-controls="electrocounters" role="tab" data-toggle="tab"><strong>Электросчетчики</strong></a>
+            </li>
+        </ul>
+        <div class="border_div"></div>
+    </div>
+    <div class="panel-body">
+        <div class="tab-content c">
+        <div class="tab-pane active"  id="watercounters">
+            <div class="container-fluid"><!--watercounters-container-->
+                <div class="row counters row--inline-blocks">
+                {% if form_water %}
+                    {% for counter in water_counters %}
+                        <div class="col-md-4 col-sm-12 col-lg-3"><!--watercounter-->
+                            <div class="well" style="{% if counter.counters_type == 'Холодная вода' %}background-color:#A6D8F2;{% else %}background-color:#F7B7B7;{% endif %}" id="{{ counter.id }}">
+                                <p><b>{{ counter.counters_type }}:</b><span style="float: right"> cчетчик № {{ counter.serial_number }}</span></p>
+                                <p><b>Дата показаний:</b><span id="wcounter_date" style="float: right">{{ counter.date_update|date:"d.m.Y" }} г.</span></p>
+                                <p><b>Показания:</b> <span id="wcounter_data" style="float: right">{{ counter.counter_data }} м<sup>3</sup></span></p>
+                                <p><b>Расход в тек. мес.:</b> <span id="wcounter_diff" style="float: right"><b>{% if counter.diff %}{{ counter.diff|default:"" }}{% else %}0{% endif %}</b> м<sup>3</sup></span><p>
+                                <form>
+                                    <p><b>Введите текущие показания счетчика: </b></p>{{ form_water.data_water }}
+                                    <input name="counter_id" type="hidden" value={{ counter.id }} />
+                                    <input name="account_id" type="hidden" value={{ counter.id_account }} />
+                                    <button class="btn btn-default sender_btn" type="submit">Отправить</button>
+                                </form>
+                                <div class="alert alert-success alert-dismissable" role="alert" id="water-message-success-{{ counter.id }}" style="display: none">
+                                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                        <strong></strong><span class="wt_success_span_{{ counter.id }}"></span>
+                                </div>
+
+                                <div class="alert alert-danger alert-dismissable" role="alert" id="water-message-error-{{ counter.id }}" style="display: none">
+                                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                        <strong>Ошибка!</strong><span class="wt_error_span_{{ counter.id }}"></span>
+                                </div>
+
+                            </div>
+                        </div>
+                    {% endfor %}
+                {% else %}
+                    <div class="col-md-4 col-sm-12 col-lg-3">
+                        <div class="alert alert-info" id="waterinfo"><strong>Внимание!</strong> {{ water_counters }}</div>
+                    </div>
+                {% endif %}
+                </div>
+            </div>
+        </div>
+        <div class="tab-pane" id="electrocounters">
+            <div class="container-fluid">
+            <div class="row counters row--inline-blocks">
+            {% if form_electric %}
+                <div class="col-md-5 col-sm-12 col-lg-4"><!--electriccounter-->
+                <div class="well" id="{{ electric_counter.id }}">
+                {% if electric_counter.counter_data_simple  %}
+                    <p align="center"><b>Электросчетчик</b></p>
+                    <p><b>Дата показаний: </b><span id="counter_date" style="float: right">{{ electric_counter.date_update|date:"d.m.Y" }} г.</span></p>
+                    <p><b>Показания: </b><span id="counter_data1" style="float: right">{{ electric_counter.counter_data_simple }} кВт/ч</span></p>
+                    <p><b>Расход в тек. мес.:</b><span id="counter_diff1" style="float: right"> <b>{% if electric_counter.diff %}{{ electric_counter.diff|default:""|floatformat:"-3" }}{% else %}0{% endif %}</b> кВт/ч</span></p>
+                    <form>
+                        <b>Введите текущие показания счетчика: </b><p> {{ form_electric.data }}
+                        <input name="e_counter_id" type="hidden" value={{ electric_counter.id }} />
+                        <input name="account_id" type="hidden" value={{ electric_counter.id_account }} />
+                        <button class="btn btn-default sender_btn" type="submit">Отправить</button></p>
+                    </form>
+                    <div class="alert alert-success alert-dismissable" role="alert" id="electric-message-success" style="display: none">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                            <strong></strong><span class="el_success_span" id ="{{ electric_counter.id }}"></span>
+                    </div>
+                    <div class="alert alert-danger alert-dismissable" role="alert" id="electric-message-error" style="display: none">
+                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                        <strong>Ошибка! </strong><span class="el_error_span" id="{{ electric_counter.id }}"></span>
+                    </div>
+                {% else %}
+                    <p align="center"><b>Электросчетчик</b></p>
+                    <p><b>Дата показаний: </b><span id="counter_date" style="float: right">{{ electric_counter.date_update|date:"d.m.Y" }} г.</span></p>
+                    <p><b>Показания День: </b><span id="counter_data1" style="float: right">{{ electric_counter.counter_data_day }} кВт/ч</span></p>
+                    <p><b>Расход в тек. мес. день:</b><span id="counter_diff1" style="float: right"><b>{% if electric_counter.diff_day %}{{ electric_counter.diff_day|default:"" }}{% else %}0{% endif %}</b> кВт/ч</span></p>
+                    <p><b>Показания Ночь: </b><span id="counter_data2" style="float: right">{{ electric_counter.counter_data_night }} кВт/ч</span></p>
+                    <p><b>Расход в тек. мес. ночь:</b><span id="counter_diff2" style="float: right"><b>{% if electric_counter.diff_night %}{{ electric_counter.diff_night|default:"" }}{% else %}0{% endif %}</b> кВт/ч</span></p>
+                    <form>
+                        <p><b>Введите текущие показания счетчика:</b></p>
+                        <p><b>Показания (день):</b> {{ form_electric.data_day }}</p>
+                        <p><b>Показания (ночь):</b> {{ form_electric.data_night }}</p>
+                        <input name="e_counter_id" type="hidden" value={{ electric_counter.id }} />
+                        <input name="account_id" type="hidden" value={{ electric_counter.id_account }} />
+                        <button class="btn btn-default sender_btn" type="submit">Отправить</button>
+                    </form>
+                    <div class="alert alert-success alert-dismissable" role="alert" id="electric-message-success" style="display: none">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                            <strong></strong><span class="el_success_span" id="{{ electric_counter.id }}"></span>
+                    </div>
+                    <div class="alert alert-danger alert-dismissable" role="alert" id="electric-message-error" style="display: none">
+                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                            <strong>Ошибка!</strong><span class="el_error_span" id ="{{ electric_counter.id }}"></span>
+                    </div>
+                {% endif %}
+                </div>
+                </div>
+            {% else %}
+                <div class="electriccounter">
+                <div class="well">
+                    <div class="alert alert-info">{{ electric_counter }}</div>
+                </div>
+                </div>
+            {% endif %}
+            </div>
+            </div>
+
+        </div><!--role = "tabpanel"-->
+    </div>
+    </div>
+</div>
+<script>
+$(document).ready(function() {
+    "use strict";
+
+    $('.panel .nav-tabs').on('click', 'a', function(e){
+        var tab  = $(this).parent(),
+        tabIndex = tab.index(),
+        tabPanel = $(this).closest('.panel'),
+        tabPane = tabPanel.find('.tab-pane').eq(tabIndex);
+        tabPanel.find('.active').removeClass('active');
+        tab.addClass('active');
+        tabPane.addClass('active');
+    });
+
+
+    var msgHandler = function (msg) {
+        if (msg['ok']){
+            //console.log(msg['ok']);
+            $('.alert').hide();
+            if (msg['el_success']){
+                var block_el = $('.well#'+msg['el_success']['cid']);
+                block_el.find('#counter_date').text(msg['date']+' г.');
+                block_el.find('#counter_data1').text(msg['data1']+' кВт/ч');
+                block_el.find('#counter_diff1').html('<b>'+msg['diff1']+'</b> кВт/ч');
+                if (msg['data2']){
+                    block_el.find('#counter_data2').text(msg['data2']+' кВт/ч');
+                    block_el.find('#counter_diff2').html('<b>'+msg['diff2']+'</b> кВт/ч');
+                }
+                block_el.find(".el_success_span").text(msg['el_success']['message']);
+                block_el.find('.alert-success').show();
+
+            }else if (msg['el_error']){
+                //console.log('el_error');
+                var block_err_el = $('.well#'+msg['el_error']['cid']);
+                block_err_el.find('.el_error_span').text(msg['el_error']['message']);
+                block_err_el.find('.alert-danger').show();
+            }
+
+            if(msg['wt_success']){
+                console.log(msg['wt_success']['cid']);
+                var block = $('.well#'+msg['wt_success']['cid']);
+                block.find('#wcounter_date').text(msg['date']+' г.');
+                block.find('#wcounter_data').html(msg['data1']+' м<sup>3</sup>');
+                block.find('#wcounter_diff').html('<b>'+msg['diff1']+'</b> м<sup>3</sup>');
+                var wt_success_alert = $('.wt_success_span_'+msg['wt_success']['cid']).text(msg['wt_success']['message']);
+                wt_success_alert.parent().show();
+            }else if (msg['wt_error']){
+                var wt_error_alert = $('.wt_error_span_'+msg['wt_error']['cid']).text(msg['wt_error']['message']);
+                wt_error_alert.parent().show();
+            }
+        }else
+        {
+            console.log('error');
+        }
+    };
+
+
+
+    var submitCounterForm = function (btn) {
+        //console.log('press2');
+        var form_data = new FormData(btn.closest('form')[0]);
+        //var account = $('#acc').text();
+        //form_data.append('account', account);
+        $.ajax({
+            url: "/api_v0/save_account_new_data/",
+            data: form_data,
+            contentType: false,
+            processData: false,
+            type: 'POST'
+        }).done(function (msg) {
+            console.log(msg);
+            msgHandler(msg);
+        });
+    };
+
+    $('.sender_btn').click(function (e) {
+        //console.log('press1');
+        e.preventDefault();
+        submitCounterForm($(this));
+
+    });
+});
+</script>
