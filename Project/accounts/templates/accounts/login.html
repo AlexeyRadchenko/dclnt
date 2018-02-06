@@ -6,14 +6,14 @@
     <link href="{% static "css/accounts/login.css"%}" rel="stylesheet">
     <script src="{% static "js/IE-checker.js"%}"></script>
     <script src="{% static "js/jquery-3.2.1.min.js"%}"></script>
-    <!--<script src="{% static "js/bootstrap.min.js"%}"></script>-->
+    <script src="{% static "js/accounts/login.js"%}"></script>
     <script src="{% static "js/alert.js"%}"></script>
 {% endblock %}
 {% block content %}
 <div class="container">
     <img src="{% static "img/accounts/old_kvitanciya.png" %}" alt="Пример квитанции" class="img-responsive center-block img-thumbnail"/>
     <p><h4 align="center" class="text_effect">Пожалуйста, введите лицевой счет и адрес, указанный на Вашей квитанции</h4></p><!--Пожалуйста, введите лицевой счет и адрес, указанный на Вашей квитанции-->
-    <form action='.' method='post' class="form-signin">
+    <form action='../' method='post' class="form-signin">
       {% csrf_token %}
         <!--<h4 class="form-signin-heading">Пожалуйста авторизуйтесь</h4>-->
         <label for="username" class="sr-only">Лицевой счет</label>
@@ -26,7 +26,7 @@
                 <strong>Ошибка!</strong> {{ account_error }}
             </div>
         {% endif %}
-        <input name="password" value="Ifd9_34*zd$fs4J" type="hidden" />
+        <input name="password" value="zYbY50K#gsYzv*6mWl" type="hidden" />
         <!--<label for="street" class="sr-only">Улица</label>
         <input type="text" name="street" value="" id="street" class="form-control" placeholder="Улица" required autofocus>-->
         <select name="street" id="street" required autofocus>
