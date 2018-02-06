@@ -24,8 +24,8 @@
                                 <p><b>Показания:</b> <span id="wcounter_data" style="float: right">{{ counter.counter_data }} м<sup>3</sup></span></p>
                                 <p><b>Расход в тек. мес.:</b> <span id="wcounter_diff" style="float: right"><b>{% if counter.diff %}{{ counter.diff|default:"" }}{% else %}0{% endif %}</b> м<sup>3</sup></span><p>
                                 <form>
-                                    <p><b>Введите текущие показания счетчика: </b></p>{{ form_water.data_water }}
-                                    <input name="counter_id" type="hidden" value={{ counter.id }} />
+                                    <p><b>Введите текущие показания счетчика: </b></p>{{ form_water.data }}
+                                    <input name="e_counter_id" type="hidden" value={{ counter.id }} />
                                     <input name="account_id" type="hidden" value={{ counter.id_account }} />
                                     <button class="btn btn-default sender_btn" type="submit">Отправить</button>
                                 </form>
