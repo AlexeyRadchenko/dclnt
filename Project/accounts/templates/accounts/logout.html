@@ -3,7 +3,7 @@
 
 {% block head %}
     {{ block.super }}
-    <link href="{% static "css/logout.css" %}" rel="stylesheet">
+    <link href="{% static "css/accounts/logout.css" %}" rel="stylesheet">
 {% endblock %}
 
 {% block content %}
@@ -12,7 +12,7 @@
         <div class="col-md-10 col-sm-12 col-md-offset-1">
                 <h1 class="page-header" align="center">Спасибо, что воспользовались приёмом показаний счетчиков on-line</h1>
                 <div class ="center-block text-center">
-                    <form method="get" action="/accounts/login/" >
+                    <form method="get" action="{% url 'accounts_login' %}" >
                         <button type="submit" class="btn btn-primary"><b>Войти снова</b></button>
                     </form>
                 </div>

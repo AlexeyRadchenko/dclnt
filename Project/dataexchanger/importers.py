@@ -53,8 +53,7 @@ class DataLoader(FileReader):
                 self.load()
                 self.result['loading status'] = 'OK'
                 read_num += 1
-            except KeyError as e:
-                print(str(e))
+            except KeyError:
                 self.result['loading status'] = 'Error'
                 self.result['error'] = 'Unknown format'
 

@@ -6,13 +6,12 @@ from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework.viewsets import ModelViewSet
 from rest_framework import permissions
-from counters.forms import FileFieldForm
 from .serializers import UserSerializer
 from django.core.cache import cache
 from django.conf import settings
 from counters.tasks import load_files_data_to_db
 from counters.models import Counters
-from .forms import ElectricCountersForm, ElectricCountersFormDayNight, WaterCountersForm, GasCountersForm
+from .forms import ElectricCountersForm, ElectricCountersFormDayNight, WaterCountersForm, GasCountersForm, FileFieldForm
 
 
 class ListUsers(ModelViewSet):
@@ -29,14 +28,12 @@ class FileUploadView(APIView):
         form = FileFieldForm(request.POST, request.FILES)
         data = {}
         if form.is_valid():
-            """id from file_upload.js"""
             self.handle_uploaded_file(request.FILES, process_id=request.POST['id'])
             if cache.get(request.POST.get('id')):
                 data['file_load'] = 'ok'
             else:
                 data['file_load'] = 'not process'
         else:
-            print(form)
             data['file_load'] = 'form_error'
         return Response(data)
 
@@ -52,7 +49,7 @@ class FileUploadView(APIView):
             files_list.append(path_n_filename)
         cache.set(process_id, 1, timeout=None)
 
-        """вызов загрузчика данных в базу из файла"""
+        """celery"""
         load_files_data_to_db.delay(files_list, process_id)
 
 
@@ -218,6 +215,7 @@ class SaveAccountNewData(APIView):
         return data.old_counter_data_day, data.old_counter_data_night
 
     def form_electric_data_simple_validator(self, form):
+
         old_data = self.get_old_data_simple_electric_water_gas_counters(self.account, form.cleaned_data['e_counter_id'])
         if old_data <= form.cleaned_data['data']:
             return True, old_data
@@ -297,6 +295,7 @@ class SaveAccountNewData(APIView):
 
     def post(self, request):
         self.account = request.POST['account_id']
+
         request.POST._mutable = True
         del request.POST['account_id']
 

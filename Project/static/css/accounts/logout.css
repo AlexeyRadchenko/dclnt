@@ -1,0 +1,9 @@
+body{
+    /*background-color: #eee;*/
+    overflow-y: visible;
+    background-image: url(../../img/accounts/277_057.jpg);
+}
+button{
+    width: 247px;
+    margin-bottom: 10px;
+}

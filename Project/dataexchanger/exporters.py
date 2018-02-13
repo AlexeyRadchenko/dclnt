@@ -96,8 +96,6 @@ class DataUnloader(FileWriter):
                     sheet.write(row, column, cell_value)
             book.save(settings.BASE_DIR+'/media/export/sd.xls')
         elif self.counters_type:
-            print('dva')
             pass
         elif self.separated_of_counters_type:
-            print('tri')
             pass

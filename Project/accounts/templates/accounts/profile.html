@@ -1,15 +1,14 @@
-{% extends "../base.html" %}
+{% extends "base.html" %}
 {% load staticfiles %}
 {% block head %}
 
     {{ block.super }}
-    <link href="{% static "css/profile.css" %} " rel="stylesheet" xmlns="http://www.w3.org/1999/html">
-    <script src="{% static "js/jquery.min.js" %} "></script>
-    <script src="{% static "js/bootstrap.min.js" %}"></script>
-    <script src="{% static "js/bootstrap-tab.js" %}"></script>
-    <script src="{% static "js/remember-tab.js" %}"></script>
-    <script src="{% static "js/collaps.js" %}"></script>
-    <script src="{% static "js/scroll_remember.js" %}"></script>
+    <link href="{% static "css/accounts/profile.css" %}" rel="stylesheet">
+    <!--<script src="{% static "js/bootstrap-tab.js" %}"></script>-->
+    <!--<script src="{% static "js/accounts/remember-tab.js" %}"></script>-->
+    <script src="{% static "js/accounts/collaps.js" %}"></script>
+    <script src="{% static "js/accounts/scroll_remember.js" %}"></script>
+    <script src="{% static "js/accounts/data_exchange.js" %}"></script>
 
 
 {% endblock %}
@@ -18,244 +17,203 @@
 <div class="container-fluid">
     <div class="row-fluid">
         <nav class="navbar navbar-default" role="navigation">
-                <div class="navbar-header">
-					<button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
-						 <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
-					</button>
-                    <p class="navbar-text"><strong>Лицевой счет:</strong> {{ username }}</p><!--class="navbar-brand"-->
-                    <p class="navbar-text"><strong>Адрес:</strong> {{ address }}</p>
-                    <a href="/payment/"><button type="submit" class="btn btn-primary" id="payment" ><b>Оплатить счет on-line</b></button></a>
-				</div>
-                <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
-					<ul class="nav navbar-nav navbar-right">
-						<li>
-                            <form action="/accounts/logout/">
-                                {% csrf_token %}
-                                <button type="submit" class="btn navbar-btn btn-primary"><b>Выход</b></button>
-                            </form>
-							<!--<button type="button" class="btn btn-default navbar-btn"><a href="/accounts/logout/"><b>Выход</b></a></button>-->
-						</li>
-					</ul>
-				</div>
-            </nav>
+            <div class="navbar-header">
+                <button type="button" class="navbar-toggle" data-toggle="collapse" data-target="#bs-example-navbar-collapse-1">
+                     <span class="sr-only">Toggle navigation</span><span class="icon-bar"></span><span class="icon-bar"></span><span class="icon-bar"></span>
+                </button>
+                <p class="navbar-text"><strong>Лицевой счет:</strong> {{ username }}</p>
+                <p class="navbar-text"><strong>Адрес:</strong> {{ address }}</p>
+                <!--<a href="/payment/"><button type="submit" class="btn btn-primary" id="payment" ><b>Оплатить счет on-line</b></button></a>-->
+            </div>
+            <div class="collapse navbar-collapse" id="bs-example-navbar-collapse-1">
+                <ul class="nav navbar-nav navbar-right">
+                    <li>
+                        <form action="{% url 'accounts_logout' %}">
+                            {% csrf_token %}
+                            <button type="submit" class="btn navbar-btn btn-primary"><b>Выход</b></button>
+                        </form>
+                    </li>
+                </ul>
+            </div>
+        </nav>
 
         <div class="col-md-10 col-sm-12 col-md-offset-1">
-            <!--<div class="tabbable" id="tabs-948719">-->
-				<ul class="nav nav-tabs nav-justified" role = "tablist">
-					<li class="active">
-						<a href="#electrocounters" aria-controls="electrocounters" role="tab" data-toggle="tab"><strong>Электросчетчики</strong></a>
-					</li>
-					<li>
-						<a a href="#watercounters" aria-controls="watercounters" role="tab" data-toggle="tab"><strong>Водосчетчики</strong></a>
-					</li>
-                    <li>
-						<a a href="#gascounters" aria-controls="gascounters" role="tab" data-toggle="tab"><strong>Газовые счетчики</strong></a>
-					</li>
-				</ul>
-				<div class="tab-content">
-					<div class="tab-pane active" id="electrocounters">
-                        <div class="panel panel-primary">
-                            <div class="panel-heading" id = "panelelectric">
-                                Инструкция по передаче показаний <strong>электросчетчиков</strong>!
-                                <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
-                            </div>
-                            <div class="panel-body">
-                                <ul>
-                                    <li><p>Вносите показания вашего электросчетчика до разделительного знака (запятой или точки).</p></li>
-                                <img src="{% static "images/primer_electros.png" %}" class="img-responsive" alt="Responsive image"/>
-                                <li><p>После того, как вы отправили показания, значения в полях <b>"Показания"</b> и <b>"Дата показаний"</b> изменятся.</p></li>
-                                <img src="{% static "images/forma.png" %}" class="img-responsive" alt="Responsive image"/>
-                                <li><p>Пожалуйста, <b>убедитесь</b>, что вы дали <b>верные</b> показания. Если вы <b>ошиблись</b>,
-                                    то <b>просто введите показания ещё раз</b>. </p></li>
-                                </ul>
-                            </div>
+            <ul class="nav nav-tabs nav-justified" role = "tablist">
+                <li class="active">
+                    <a href="#electrocounters" aria-controls="electrocounters" role="tab" data-toggle="tab"><strong>Электросчетчики</strong></a>
+                </li>
+                {% if form_water %}
+                <li>
+                    <a href="#watercounters" aria-controls="watercounters" role="tab" data-toggle="tab"><strong>Водосчетчики</strong></a>
+                </li>
+                {% endif %}
+                {% if form_gas %}
+                <li>
+                    <a href="#gascounters" aria-controls="gascounters" role="tab" data-toggle="tab"><strong>Газовые счетчики</strong></a>
+                </li>
+                {% endif %}
+            </ul>
+            <div class="tab-content">
+                {% if form_electric %}
+                <div class="tab-pane active" id="electrocounters">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading" id = "panelelectric">
+                            Инструкция по передаче показаний <strong>электросчетчиков</strong>!
+                            <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
                         </div>
-                        <div class="container-fluid">
+                        <div class="panel-body">
+                            <h1>Здесь могла бы быть инструкция</h1>
+                        </div>
+                    </div>
+                    <div class="container-fluid">
                         <div class="row counters row--inline-blocks">
-						{% if form_electric %}
-                            <div class="col-md-5 col-sm-12 col-lg-4"><!--electriccounter-->
-                            <div class="well">
-                            {% if electric_counter.counter_data_simple  %}
-                                <p align="center"><b>Электросчетчик</b></p>
-                                <p><b>Дата показаний: </b><span style="float: right">{{ electric_counter.date_update|date:"d.m.Y" }} г.</span></p>
-                                <p><b>Показания: </b><span style="float: right">{{ electric_counter.counter_data_simple }} кВт/ч</span></p>
-                                <p><b>Расход в тек. мес.:</b><span style="float: right"> {{ electric_counter.diff|default:""|floatformat:"-3" }} кВт/ч</span></p>
-                                <form method="post">
-                                    {% csrf_token %}
-                                    <b>Введите текущие показания счетчика: </b><p> {{ form_electric.data }}
-                                    <input name="e_counter_id" type="hidden" value={{ electric_counter.id }} />
-                                    <button class="btn btn-default" type="submit">Отправить</button></p>
-                                </form>
-                                {% if form_electric_success %}
-                                    <div class="alert alert-success alert-dismissable" role="alert" id="electric-message">
-                                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                                            <strong>Спасибо!</strong> {{ form_electric_success }}
-                                    </div>
-                                {% else %}
-                                    {% if form_electric_error %}
-                                        <div class="alert alert-danger alert-dismissable" role="alert" id="electric-message">
-                                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                                            <strong>Ошибка!</strong> {{ form_electric_error }}
-                                        </div>
-                                    {% endif %}
-                                {% endif %}
-                            {% else %}
-                                <p align="center"><b>Электросчетчик</b></p>
-                                <p><b>Дата показаний: </b><span style="float: right">{{ electric_counter.date_update|date:"d.m.Y" }} г.</span></p>
-                                <p><b>Показания День: </b><span style="float: right">{{ electric_counter.counter_data_day }} кВт/ч</span></p>
-                                <p><b>Расход в тек. мес. день:</b><span style="float: right">{{ electric_counter.diff_day|default:"" }} кВт/ч</span></p>
-                                <p><b>Показания Ночь: </b><span style="float: right">{{ electric_counter.counter_data_night }} кВт/ч</span></p>
-                                <p><b>Расход в тек. мес. ночь:</b><span style="float: right">{{ electric_counter.diff_night|default:"" }} кВт/ч</span></p>
-                                <form method="post">
-                                    {% csrf_token %}
-                                    <p><b>Введите текущие показания счетчика:</b></p>
-                                    <p><b>Показания (день): {{ form_electric.data_day }}</b></p>
-                                    <p><b>Показания (ночь): {{ form_electric.data_night }}</b></p>
-                                    <input name="e_counter_id" type="hidden" value={{ electric_counter.id }} />
-                                    <button class="btn btn-default" type="submit">Отправить</button>
-                                </form>
-                                {% if form_electric_success %}
-                                    <div class="alert alert-success alert-dismissable" role="alert" id="electric-message">
-                                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                                            <strong>Спасибо!</strong> {{ form_electric_success }}
-                                    </div>
-                                {% else %}
-                                    {% if form_electric_error %}
-                                    <div class="alert alert-danger alert-dismissable" role="alert" id="electric-message">
-                                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                                            <strong>Ошибка!</strong> {{ form_electric_error }}
-                                    </div>
-                                    {% endif %}
-                                {% endif %}
-                            {% endif %}
-                            </div>
-                            </div>
-                        {% else %}
-                            <div class="electriccounter">
-                            <div class="well">
-                                <div class="alert alert-info">{{ electric_counter }}</div>
-                            </div>
-                            </div>
-                        {% endif %}
-                        </div>
-                        </div>
-
-					</div><!--role = "tabpanel"-->
-					<div class="tab-pane"  id="watercounters">
-                        <div class="panel panel-primary">
-                            <div class="panel-heading" id = "panelwater">
-                                Инструкция по передаче показаний <strong>водосчетчиков</strong>!
-                                <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
-                            </div>
-                            <div class="panel-body">
-                                <ul>
-                                    <li><p>Вносите показания вашего водосчетчика ввиде <b>десятичной дроби</b>, например: <b>19,29</b> или <b>0,082</b> с разделительным знаком (запятой или точкой).
-                                            Обратите внимание, что если вы <b>пропустите разделитель</b>, то <b>отправите не 1,9 кубических метров, а 1929</b>.
-                                    </p></li>
-                                <img src="{% static "images/primer_water.png" %}" class="img-responsive" alt="Responsive image"/>
-                                <li><p>После того, как вы отправили показания, значения в полях <b>"Показания"</b> и <b>"Дата показаний"</b> изменятся. </p><p>К какому счетчику относятся показания указано в верхнем поле, например:
-                                    <b>"Холодная вода : счетчик № 1604"</b>.</p></li>
-                                <img src="{% static "images/form_water.png" %}" class="img-responsive" alt="Responsive image"/>
-                                <li><p>Пожалуйста, <b>убедитесь</b>, что вы дали <b>верные</b> показания <b>для каждого водосчетчика</b>. Если вы <b>ошиблись</b>,
-                                    то <b>просто введите показания ещё раз</b>. </p></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="container-fluid"><!--watercounters-container-->
-                            <div class="row counters row--inline-blocks">
-                            {% if form_water %}
-                                {% for counter in water_counters %}
-                                    <div class="col-md-4 col-sm-12 col-lg-3"><!--watercounter-->
-                                    <div class="well" style="{% if counter.counters_type == 'Холодная вода' %}background-color:#A6D8F2;{% else %}background-color:#F7B7B7;{% endif %}">
-                                    <p><b>{{ counter.counters_type }}:</b><span style="float: right"> cчетчик № {{ counter.serial_number }}</span></p>
-                                    <p><b>Дата показаний:</b><span style="float: right">{{ counter.date_update|date:"d.m.Y" }} г.</span></p>
-                                    <p><b>Показания:</b> <span style="float: right">{{ counter.counter_data }} м<sup>3</sup></span></p>
-                                    <p><b>Расход в тек. мес.:</b> <span style="float: right">{{ counter.diff|default:"" }} м<sup>3</sup></span><p>
+                            <div class="col-md-5 col-sm-12 col-lg-4">
+                                <div class="well" id="{{ electric_counter.id }}">
+                                {% if electric_counter.counter_data_simple  %}
+                                    <p align="center"><b>Электросчетчик</b></p>
+                                    <p><b>Дата показаний: </b><span id="counter_date" style="float: right">{{ electric_counter.date_update }} г.</span></p>
+                                    <p><b>Показания: </b><span id="counter_data1" style="float: right">{{ electric_counter.counter_data_simple|stringformat:'d' }} кВт/ч</span></p>
+                                    <p><b>Расход в тек. мес.:</b><span id="counter_diff1" style="float: right"> {{ electric_counter.diff|stringformat:'d' }} кВт/ч</span></p>
                                     <form method="post">
                                         {% csrf_token %}
-                                        <p><b>Введите текущие показания счетчика: </b></p>{{ form_water.data_water }}
-                                        <input name="e_counter_id" type="hidden" value={{ counter.id }} />
-                                        <button class="btn btn-default" type="submit">Отправить</button>
+                                        <b>Введите текущие показания счетчика: </b><p> {{ form_electric.data }}
+                                        <input name="e_counter_id" type="hidden" value={{ electric_counter.id }} />
+                                        <input name="account_id" type="hidden" value={{ electric_counter.account_id }} />
+                                        <button class="btn btn-default sender_btn" type="submit">Отправить</button></p>
                                     </form>
-                                    {% if form_water_success.cid == counter.id %}
-                                        <div class="alert alert-success alert-dismissable" role="alert" id="water-message">
-                                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                                                <strong>Спасибо!</strong> {{ form_water_success.message }}
-                                        </div>
-                                    {% endif %}
-                                    {% if form_water_error.cid == counter.id %}
-                                        <div class="alert alert-danger alert-dismissable" role="alert" id="water-message">
-                                                <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                                                <strong>Ошибка!</strong> {{ form_water_error.message }}
-                                        </div>
-                                    {% endif %}
+                                    <div class="alert alert-success alert-dismissable" role="alert" id="electric-message" style="display:none;">
+                                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                        <strong>Спасибо!</strong><span class="el_success_span" id ="{{ electric_counter.id }}"></span>
                                     </div>
+
+                                    <div class="alert alert-danger alert-dismissable" role="alert" id="electric-message" style="display: none;">
+                                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                        <strong>Ошибка!</strong><span class="el_error_span" id = "{{ electric_counter.id }}"></span>
                                     </div>
-                                {% endfor %}
-                            {% else %}
-                                <div class="col-md-4 col-sm-12 col-lg-3">
-                                    <div class="alert alert-info" id="waterinfo"><strong>Внимание!</strong> {{ water_counters }}</div>
-                                </div>
-                            {% endif %}
-                            </div>
-                        </div>
-					</div>
-                    <div class="tab-pane" id ="gascounters">
-                        <div class="panel panel-primary">
-                            <div class="panel-heading" id = "panelgas">
-                                Инструкция по передаче показаний <strong>Счетчиков газа</strong>!
-                                <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
-                            </div>
-                            <div class="panel-body">
-                                <ul>
-                                    <li><p>Вносите показания вашего водосчетчика ввиде <b>десятичной дроби</b>, например: <b>19,29</b> или <b>0,082</b> с разделительным знаком (запятой или точкой).
-                                            Обратите внимание, что если вы <b>пропустите разделитель</b>, то <b>отправите не 1,9 кубических метров, а 1929</b>.
-                                    </p></li>
-                                <img src="{% static "images/primer_water.png" %}" class="img-responsive" alt="Responsive image"/>
-                                <li><p>После того, как вы отправили показания, значения в полях <b>"Показания"</b> и <b>"Дата показаний"</b> изменятся. </p><p>К какому счетчику относятся показания указано в верхнем поле, например:
-                                    <b>"Холодная вода : счетчик № 1604"</b>.</p></li>
-                                <img src="{% static "images/form_water.png" %}" class="img-responsive" alt="Responsive image"/>
-                                <li><p>Пожалуйста, <b>убедитесь</b>, что вы дали <b>верные</b> показания <b>для каждого водосчетчика</b>. Если вы <b>ошиблись</b>,
-                                    то <b>просто введите показания ещё раз</b>. </p></li>
-                                </ul>
-                            </div>
-                        </div>
-                        <div class="container-fluid">
-                            <div class="row counters row--inline-blocks">
-                                {% if form_gas %}
-                                        <div class="col-md-5 col-sm-12 col-lg-4"><!--electriccounter-->
-                                            <div class="well">
-                                                <p align="center"><b>Газовый счетчик</b></p>
-                                                <p><b>Дата показаний: </b><span style="float: right">{{ gas_counter.date_update|date:"d.m.Y" }} г.</span></p>
-                                                <p><b>Показания: </b><span style="float: right">{{ gas_counter.counter_data }} м<sup>3</sup></span></p>
-                                                <p><b>Расход в тек. мес.:</b><span style="float: right"> {{ gas_counter.diff|default:""|floatformat:"-3" }} м<sup>3</sup></span></p>
-                                                <form method="post">
-                                                    {% csrf_token %}
-                                                    <b>Введите текущие показания счетчика:</b> {{ form_gas.data_gas }}
-                                                    <input name="g_counter_id" type="hidden" value={{ gas_counter.id }} />
-                                                    <button class="btn btn-default" type="submit">Отправить</button>
-                                                </form>
-                                                {% if form_gas_success %}
-                                                    <div class="alert alert-success alert-dismissable" role="alert" id="gas-message">
-                                                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                                                        <strong>Спасибо!</strong> {{ form_gas_success }}
-                                                    </div>
-                                                {% elif form_gas_error %}
-                                                    <div class="alert alert-danger alert-dismissable" role="alert" id="gas-message">
-                                                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
-                                                        <strong>Ошибка!</strong> {{ form_gas_error }}
-                                                    </div>
-                                                {% endif %}
-                                            </div>
-                                        </div>
+                                {% else %}
+                                    <p align="center"><b>Электросчетчик</b></p>
+                                    <p><b>Дата показаний: </b><span id="counter_date" style="float: right">{{ electric_counter.date_update|date:"d.m.Y" }} г.</span></p>
+                                    <p><b>Показания День: </b><span id="counter_data1" style="float: right">{{ electric_counter.counter_data_day }} кВт/ч</span></p>
+                                    <p><b>Расход в тек. мес. день:</b><span id="counter_diff1" style="float: right">{{ electric_counter.diff_day|default:0 }} кВт/ч</span></p>
+                                    <p><b>Показания Ночь: </b><span id="counter_data2" style="float: right">{{ electric_counter.counter_data_night }} кВт/ч</span></p>
+                                    <p><b>Расход в тек. мес. ночь:</b><span id = "counter_diff2" style="float: right">{{ electric_counter.diff_night|default:0 }} кВт/ч</span></p>
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <p><b>Введите текущие показания счетчика:</b></p>
+                                        <p><b>Показания (день): {{ form_electric.data_day }}</b></p>
+                                        <p><b>Показания (ночь): {{ form_electric.data_night }}</b></p>
+                                        <input name="e_counter_id" type="hidden" value={{ electric_counter.id }} />
+                                        <input name="account_id" type="hidden" value={{ electric_counter.account_id }} />
+                                        <button class="btn btn-default sender_btn" type="submit">Отправить</button>
+                                    </form>
+
+                                    <div class="alert alert-success alert-dismissable" role="alert" id="electric-message" style="display: none;">
+                                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                            <strong>Спасибо!</strong><span class="el_success_span" id ="{{ electric_counter.id }}"></span>
+                                    </div>
+
+                                    <div class="alert alert-danger alert-dismissable" role="alert" id="electric-message" style="display: none;">
+                                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                            <strong>Ошибка!</strong><span class="el_error_span" id = "{{ electric_counter.id }}"></span>
+                                    </div>
                                 {% endif %}
+                                </div>
                             </div>
                         </div>
                     </div>
-				</div>
-            <div class="footer"></div>
-			<!--</div>-->
+                </div>
+                {% endif %}
+                {% if form_water %}
+                <div class="tab-pane"  id="watercounters">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading" id = "panelwater">
+                            Инструкция по передаче показаний <strong>водосчетчиков</strong>!
+                            <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
+                        </div>
+                        <div class="panel-body">
+                            <h1>Здесь могла бы быть инструкция</h1>
+                        </div>
+                    </div>
+                    <div class="container-fluid">
+                        <div class="row counters row--inline-blocks">
+                        {% for counter in water_counters %}
+                            <div class="col-md-4 col-sm-12 col-lg-3"><!--watercounter-->
+                                <div class="well" style="{% if counter.counters_type == 'Холодная вода' %}background-color:#A6D8F2;{% else %}background-color:#F7B7B7;{% endif %}" id = "{{ counter.id }}">
+                                    <p><b>{{ counter.counters_type }}:</b><span style="float: right"> cчетчик № {{ counter.serial_number }}</span></p>
+                                    <p><b>Дата показаний:</b><span id="wcounter_date" style="float: right">{{ counter.date_update|date:"d.m.Y" }} г.</span></p>
+                                    <p><b>Показания:</b> <span id="wcounter_data" style="float: right">{{ counter.counter_data }} м<sup>3</sup></span></p>
+                                    <p><b>Расход в тек. мес.:</b> <span id="wcounter_diff" style="float: right">{{ counter.diff|default:"" }} м<sup>3</sup></span></p>
+                                    <form>
+                                        {% csrf_token %}
+                                        <p><b>Введите текущие показания счетчика: </b></p>{{ form_water.data }}
+                                        <input name="e_counter_id" type="hidden" value={{ counter.id }} />
+                                        <input name="account_id" type="hidden" value={{ counter.account_id }} />
+                                        <button class="btn btn-default sender_btn" type="submit">Отправить</button>
+                                    </form>
+
+                                    <div class="alert alert-success alert-dismissable" role="alert" id="water-message" style="display: none;">
+                                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                            <strong>Спасибо!</strong><span class="wt_success_span_{{ counter.id }}"></span>
+                                    </div>
+
+                                    <div class="alert alert-danger alert-dismissable" role="alert" id="water-message" style="display: none;">
+                                            <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                            <strong>Ошибка!</strong><span class="wt_error_span_{{ counter.id }}"></span>
+                                    </div>
+
+                                </div>
+                            </div>
+                        {% endfor %}
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+                {% if form_gas %}
+                <div class="tab-pane" id ="gascounters">
+                    <div class="panel panel-primary">
+                        <div class="panel-heading" id = "panelgas">
+                            Инструкция по передаче показаний <strong>Счетчиков газа</strong>!
+                            <span class="pull-right clickable"><i class="glyphicon glyphicon-chevron-up"></i></span>
+                        </div>
+                        <div class="panel-body">
+                            <h1>Здесь могла бы быть инструкция</h1>
+                        </div>
+                    </div>
+                    <div class="container-fluid">
+                        <div class="row counters row--inline-blocks">
+
+                            <div class="col-md-5 col-sm-12 col-lg-4">
+                                <div class="well" id = "{{ gas_counter.id }}">
+                                    <p align="center"><b>Газовый счетчик</b></p>
+                                    <p><b>Дата показаний: </b><span id="gcounter_date" style="float: right">{{ gas_counter.date_update|date:"d.m.Y" }} г.</span></p>
+                                    <p><b>Показания: </b><span id="gcounter_data" style="float: right">{{ gas_counter.counter_data }} м<sup>3</sup></span></p>
+                                    <p><b>Расход в тек. мес.:</b><span id="gcounter_diff" style="float: right"> {{ gas_counter.diff|default:""|floatformat:"-3" }} м<sup>3</sup></span></p>
+                                    <form method="post">
+                                        {% csrf_token %}
+                                        <b>Введите текущие показания счетчика:</b> {{ form_gas.data }}
+                                        <input name="g_counter_id" type="hidden" value={{ gas_counter.id }} />
+                                        <input name="account_id" type="hidden" value={{ gas_counter.account_id }} />
+                                        <button class="btn btn-default sender_btn" type="submit">Отправить</button>
+                                    </form>
+
+                                    <div class="alert alert-success alert-dismissable" role="alert" id="gas-message">
+                                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                        <strong>Спасибо!</strong>
+                                    </div>
+
+                                    <div class="alert alert-danger alert-dismissable" role="alert" id="gas-message">
+                                        <button type="button" class="close" data-dismiss="alert" aria-hidden="true">&times;</button>
+                                        <strong>Ошибка!</strong>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                {% endif %}
+            </div>
         </div>
+        <div class="footer"></div>
     </div>
 </div>
 {% endblock %}

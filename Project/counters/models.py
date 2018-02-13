@@ -16,23 +16,9 @@ class Accounts(models.Model):
     class Meta:
         verbose_name = 'Лицевой счет'
         verbose_name_plural = 'Лицевые счета'
-"""
-    @receiver(post_save, sender=User)
-    def create_user(sender, instance, created, **kwargs):
-        if created and instance.id != 1:
-            Accounts.objects.create(user=instance, id=instance.username)
-
-    @receiver(post_save, sender=User)
-    def save_user(sender, instance, **kwargs):
-        if instance.id != 1:
-            instance.accounts.save()
-
-    def __str__(self):
-        return str(self.user)"""
 
 
 class Counters(models.Model):
-    id = models.AutoField(primary_key=True)
     id_out_system = models.CharField(blank=True, max_length=8, null=True, unique=True)
     creation_date = models.DateField(blank=True, verbose_name='Дата производства', null=True)
     setup_date = models.DateField(blank=True, verbose_name='Дата установки', null=True)
@@ -69,7 +55,6 @@ class Counters(models.Model):
 
 
 class DataHistory(models.Model):
-    id = models.BigIntegerField(primary_key=True)
     account_id = models.ForeignKey(Accounts, verbose_name='Лицевой счет', on_delete=models.CASCADE)
     counter_id = models.ForeignKey(Counters, verbose_name='ID Электросчетика', null=True, on_delete=models.CASCADE)
     counter_type = models.CharField(verbose_name='Тип счетчика', max_length=30)

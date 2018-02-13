@@ -54,6 +54,15 @@ class AccountsView(TemplateView, LoginRequiredMixin):
             account_id__exact=self.account,
         )
 
+    def get_account_address(self):
+        return Accounts.objects.values_list(
+            'street',
+            'house_number',
+            'apartments_number',
+        ).filter(
+            user__exact=self.account
+        )
+
     @staticmethod
     def get_electric_counter_data_and_form(account_counters):
         electric_counters_data, electric_counter_form = None, None
@@ -66,6 +75,7 @@ class AccountsView(TemplateView, LoginRequiredMixin):
                         'counter_data_simple': counter[1],
                         'id': counter[9],
                         'diff': counter[1]-counter[4],
+                        'account_id': counter[10],
                     }
                     electric_counter_form = ElectricCountersForm()
                     break
@@ -78,6 +88,7 @@ class AccountsView(TemplateView, LoginRequiredMixin):
                         'id': counter[9],
                         'diff_day': counter[2] - counter[5],
                         'diff_night': counter[3] - counter[6],
+                        'account_id': counter[10],
                     }
                     electric_counter_form = ElectricCountersFormDayNight()
                     break
@@ -97,6 +108,7 @@ class AccountsView(TemplateView, LoginRequiredMixin):
                     'counter_data': counter[1],
                     'id': counter[9],
                     'diff': counter[1] - counter[4],
+                    'account_id': counter[10],
                 }
                 water_counters_data.append(data)
         if water_counters_data:
@@ -117,10 +129,11 @@ class AccountsView(TemplateView, LoginRequiredMixin):
                     'counter_data': counter[1],
                     'id': counter[9],
                     'diff': counter[1] - counter[4],
+                    'account_id': counter[10],
                 }
                 break
         if gas_counter_data is None:
-            gas_counter_form = 'нет зарегистрированных водосчетчиков'
+            gas_counter_form = 'нет зарегистрированных газовых счетчиков'
         else:
             gas_counter_form = WaterCountersForm()
         return gas_counter_data, gas_counter_form
@@ -132,15 +145,17 @@ class AccountsView(TemplateView, LoginRequiredMixin):
         electric_counters_data, electric_counter_form = self.get_electric_counter_data_and_form(account_counters)
         water_counters_data, water_counters_form = self.get_water_counters_data_and_form(account_counters)
         gas_counter_data, gas_counter_form = self.get_gas_counter_data_and_form(account_counters)
+        address = self.get_account_address()
+
         context['username'] = self.account
         context['id'] = self.account
-        context['address'] = None
+        context['address'] = f'ул. {address[0][0]}, д. {address[0][1]}, кв. {address[0][2]}'
         context['electric_counter'] = electric_counters_data
         context['water_counters'] = water_counters_data
         context['gas_counter'] = gas_counter_data
         context['form_electric'] = electric_counter_form
-        context['form_water'] = water_counters_form
-        context['form_gas'] = gas_counter_form
+        context['form_water'] = None if isinstance(water_counters_form, str) else water_counters_form
+        context['form_gas'] = None if isinstance(gas_counter_form, str) else gas_counter_form
         context['display_electric'] = True
 
         return context
@@ -152,4 +167,3 @@ class AccountsLogoutView(TemplateView):
     def get(self, request, *args, **kwargs):
         logout(request)
         return render(request, self.template_name)
-

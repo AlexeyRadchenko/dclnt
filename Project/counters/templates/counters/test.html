@@ -2,9 +2,7 @@
 {% load static %}
 {% block head %}
 {{ block.super }}
-    <!--js-->
-    <!--<script src=""></script>-->
-    <!--js_end-->
+
 {% endblock %}
 {% block content %}
     <div class="container-fluid">
@@ -17,9 +15,9 @@
             <div class="col-md-offset-4 col-md-4" style="align-content: center">
                 <h2 align="center">Роли пользователей</h2>
                 <div class="row" id="btns">
-                    <div class="col-md-4 text-center"><a href="/accounts/login/" class="btn btn-default">Жилец</a></div>
-                    <div class="col-md-4 text-center"><a href="/management/{{ user }}" class="btn btn-default">Диспетчер</a></div>
-                    <div class="col-md-4 text-center"><a href="/management/{{ user }}" class="btn btn-default">Сотрудник РКЦ</a></div>
+                    <div class="col-md-4 text-center"><a href="{% url 'accounts_login' %}" class="btn btn-default">Жилец</a></div>
+                    <div class="col-md-4 text-center"><a href="{% url 'management_login' %}" class="btn btn-default">Диспетчер</a></div>
+                    <div class="col-md-4 text-center"><a href="{% url 'management_login' %}" class="btn btn-default">Сотрудник РКЦ</a></div>
                 </div>
             </div>
         </div>

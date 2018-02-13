@@ -111,13 +111,14 @@ class BASE(Configuration):
     CELERY_BROKER_URL = f'redis://{REDIS_HOST}:{REDIS_PORT}/0'
     CELERY_RESULT_BACKEND = f'redis://{REDIS_HOST}:{REDIS_PORT}/0'
 
-    DATE_FORMAT = '%d.%m.%Y'
+    DATE_FORMAT = 'd.m.Y'
     USERS_PASS = MY_USERS_PASS
 
     DEBUG_TOOLBAR_CONFIG = {
         'SHOW_TOOLBAR_CALLBACK': lambda r: False,  # disables it
         # '...
     }
+
 
 class Dev(BASE):
     INTERNAL_IPS = [
