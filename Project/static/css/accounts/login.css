@@ -39,6 +39,8 @@ body {
 }
 img {
   margin: 0 auto;
+  width: 854px;
+  hight: 473px;
 }
 #account-error{
   margin-bottom: 0px;
