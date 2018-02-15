@@ -1,5 +1,8 @@
 import datetime
+import os
+
 from django.contrib.auth.models import User
+from django.http import Http404, FileResponse
 from rest_framework.parsers import MultiPartParser, FormParser
 from rest_framework.renderers import TemplateHTMLRenderer, JSONRenderer
 from rest_framework.response import Response
@@ -9,9 +12,10 @@ from rest_framework import permissions
 from .serializers import UserSerializer
 from django.core.cache import cache
 from django.conf import settings
-from counters.tasks import load_files_data_to_db
+from counters.tasks import load_files_data_to_db, unload_data_to_file_from_db
 from counters.models import Counters
-from .forms import ElectricCountersForm, ElectricCountersFormDayNight, WaterCountersForm, GasCountersForm, FileFieldForm
+from .forms import ElectricCountersForm, ElectricCountersFormDayNight, WaterCountersForm, GasCountersForm, \
+    FileFieldForm, DownloadFileForm
 
 
 class ListUsers(ModelViewSet):
@@ -51,6 +55,33 @@ class FileUploadView(APIView):
 
         """celery"""
         load_files_data_to_db.delay(files_list, process_id)
+
+
+class FileDownloadView(APIView):
+    permission_classes = (permissions.IsAuthenticated,)
+    parser_classes = (MultiPartParser, FormParser,)
+
+    @staticmethod
+    def get_month_year(date):
+        month = date.split('.')[0].lstrip('0') if date else datetime.date.today().month
+        year = date.split('.')[1] if date else datetime.date.today().year
+        return month, year
+
+    def post(self, request):
+        # {'select_extension': 1, 'count_type': 1, 'textinput': '', 'id': '_pb8he3p2j', 'date': ''}
+        form = DownloadFileForm(request.POST)
+        if form.is_valid():
+            file_name = form.cleaned_data['textinput']
+            extension = form.cleaned_data['select_extension']
+            process_id = form.cleaned_data['id']
+            counters_type = form.cleaned_data['counter_type']
+            month, year = self.get_month_year(form.cleaned_data['date'])
+            unload_data_to_file_from_db(file_name, extension, process_id, counters_type, month, year)
+        return Response({'file_unload': 'ok', 'url': '/media/export/sd.xls'})
+
+
+
+
 
 
 class UpdateProgressBarView(APIView):

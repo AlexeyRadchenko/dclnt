@@ -6,13 +6,18 @@ from django.conf import settings
 
 
 class FileWriter:
+    extensions = {
+        1: 'xls',
+        2: 'xlsx',
+    }
+
     def __init__(self, file_extension):
 
         self.file_type = file_extension
         self.result = {}
         self.writers_selector = {
-            'xls': self.xls_writer,
-            'xlsx': self.xlsx_writer,
+            1: self.xls_writer,
+            2: self.xlsx_writer,
         }
         self.row_format_selector = {
             'xls': ExcelUnloadFormat,
@@ -36,11 +41,19 @@ class FileWriter:
 
 
 class DataUnloader(FileWriter):
+    counters_type_select = {
+        1: 'все_счетчики_',
+        2: 'энергосчетчики_',
+        3: 'водосчетчики_',
+        4: 'газовые_счетчики_',
+    }
+
     def __init__(
             self,
             file_extension,
-            #month,
-            #year,
+            month,
+            year,
+            file_name=None,
             account=None,
             street=None,
             house_number=None,
@@ -55,9 +68,15 @@ class DataUnloader(FileWriter):
         self.apartments = apartments
         self.counters_type = counters_type
         self.separated_of_counters_type = separated_of_counters_type
-        self.month = date.today().month
-        self.year = date.today().year
+        self.month = month
+        self.year = year
+        self.file_name = file_name
+        self.file_extension = self.extensions[file_extension]
         self.writer = self.writers_selector[file_extension]()
+        self.unloader = {
+            'xls': self.xls_unload,
+            'xlsx': self.xlsx_unload,
+        }
 
     def get_data_from_db(self):
         counters_objects = Counters.objects.select_related(
@@ -86,16 +105,24 @@ class DataUnloader(FileWriter):
 
         return counters_objects
 
-    def unload(self):
-        if not self.counters_type and not self.separated_of_counters_type:
+    def file_name_generator(self):
+        if not self.file_name:
+            return f'{self.counters_type_select[self.counters_type]}{self.month}-{self.year}{self.file_extension}'
+        else:
+            return f'{self.file_name}{self.month}-{self.year}{self.file_extension}'
+
+    def xls_unload(self):
+        if self.counters_type == 1:
             db_data = self.get_data_from_db()
             book, sheet = self.writer
             for row, data in enumerate(db_data, start=1):
                 row_data = ExcelUnloadFormat(row, data).db_data_to_row_data()
                 for column, cell_value in enumerate(row_data):
                     sheet.write(row, column, cell_value)
-            book.save(settings.BASE_DIR+'/media/export/sd.xls')
-        elif self.counters_type:
-            pass
-        elif self.separated_of_counters_type:
-            pass
+            book.save(f'{settings.BASE_DIR}/media/export/{self.file_name_generator()}')
+
+    def xlsx_unload(self):
+        pass
+
+    def unload(self):
+        self.unloader[self.file_extension]()

@@ -8,6 +8,18 @@ class FileFieldForm(forms.Form):
     )
 
 
+class DownloadFileForm(forms.Form):
+    select_extension = forms.IntegerField()
+    count_type = forms.IntegerField()
+    textinput = forms.CharField(
+        required=False
+    )
+    id = forms.CharField()
+    date = forms.CharField(
+        required=False
+    )
+
+
 class ElectricCountersForm(forms.Form):
     data = forms.IntegerField(
         label='Введите показания счетчика',

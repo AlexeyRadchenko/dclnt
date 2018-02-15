@@ -1,3 +1,4 @@
+//https://uxsolutions.github.io/bootstrap-datepicker/
 $( document ).ready(function() {
 
     String.prototype.format = String.prototype.f = function(){
@@ -71,5 +72,16 @@ $( document ).ready(function() {
     $('#log_out').click(function (e) {
         e.preventDefault();
         LogOut();
+    });
+
+    $(".date_select").datepicker({
+        format: "mm.yyyy",
+        startView: 1,
+        minViewMode: 1,
+        language: "ru",
+        autoclose: true,
+        todayHighlight: true,
+        todayBtn: "linked",
+        toggleActive: true
     });
 });
