@@ -11,4 +11,4 @@ def load_files_data_to_db(files_list, process_id):
 
 @shared_task
 def unload_data_to_file_from_db(file_name, file_extension, process_id, counters_type, month, year):
-    DataUnloader(file_name, file_extension, process_id, month, year, counters_type).unload()
+    DataUnloader(file_extension,  process_id, month, year, file_name=file_name, counters_type=counters_type).unload()

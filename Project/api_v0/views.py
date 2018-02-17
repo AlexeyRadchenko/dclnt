@@ -74,21 +74,21 @@ class FileDownloadView(APIView):
             file_name = form.cleaned_data['textinput']
             extension = form.cleaned_data['select_extension']
             process_id = form.cleaned_data['id']
-            counters_type = form.cleaned_data['counter_type']
+            counters_type = form.cleaned_data['count_type']
             month, year = self.get_month_year(form.cleaned_data['date'])
-            unload_data_to_file_from_db(file_name, extension, process_id, counters_type, month, year)
-        return Response({'file_unload': 'ok', 'url': '/media/export/sd.xls'})
 
+            cache.set(process_id, 1, timeout=None)
+            unload_data_to_file_from_db.delay(file_name, extension, process_id, counters_type, month, year)
 
-
-
+        return Response({'file_unload': 'ok'})
 
 
 class UpdateProgressBarView(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def get(self, request):
-        loading_task = cache.get(request.GET.get('id'))
+        id_task = request.GET.get('id')
+        loading_task = cache.get(id_task)
         if loading_task and loading_task != 404:
             if loading_task < 100:
                 return Response(data={
@@ -96,7 +96,15 @@ class UpdateProgressBarView(APIView):
                     'status': 'loading',
                     'id': request.GET.get('id')})
             else:
-                return Response(data={'percent': 100, 'status': 'done', 'id': request.GET.get('id')})
+                download_task = cache.get(f'url_{id_task}')
+                url, file_name = download_task if download_task else (None, None)
+                return Response(data={
+                    'percent': 100,
+                    'status': 'done',
+                    'id': request.GET.get('id'),
+                    'url': url,
+                    'file_name': file_name,
+                })
         else:
             return Response(data={'percent': 0, 'status': 'error', 'id': request.GET.get('id')})
 

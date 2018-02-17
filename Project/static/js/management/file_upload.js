@@ -47,8 +47,7 @@ $( document ).ready(function() {
             //console.log(msg);
             if (msg['file_unload'] === 'ok'){
                 //setTimeout(progressbarUpdate(0);
-                //progressbarUpdate(id, 1);
-                $('#download_link').append('<p><a href=\"'+msg['url']+'\">Скачать</a></p>');
+                progressbarUpdate(id, 1);
             }
             else
             {
@@ -69,24 +68,29 @@ $( document ).ready(function() {
         }).done(function (data) {
             console.log(data);
             var ProgressBar = NaN;
+            if (form_type === 0) {
+                ProgressBar = $('.progress-bar#upload')
+            } else if (form_type === 1){
+                ProgressBar = $('.progress-bar#download')
+            }
+
             if (data['percent'] <= 100 && data['status'] === 'loading') {
-                if (form_type === 0) {
-                    ProgressBar = $('.progress-bar#upload')
-                } else if (form_type === 1){
-                    ProgressBar = $('.progress-bar#download')
-                }
+
                 ProgressBar.css(
                 'width', data['percent']+'%').attr(
                     'aria-valuenow', data['percent']).text(data['percent']+'%');
 
                 setTimeout(function() {
-                    progressbarUpdate(id);
+                    progressbarUpdate(id, form_type);
                 }, 500);
                 //progressbarUpdate(id);
             }else if (data['status'] === 'done'){
                 ProgressBar.css(
                 'width', data['percent']+'%').attr(
                     'aria-valuenow', data['percent']).text(data['percent']+'%');
+                if (data['url']) {
+                    $('#download_link').append('<p><a href=\"'+data['url']+'\">'+data['file_name']+'</a></p>')
+                }
             }else{
                 console.log(data)
             }
