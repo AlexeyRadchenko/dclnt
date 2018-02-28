@@ -11,12 +11,15 @@ $( document ).ready(function() {
 
     var removeActive = function() {
         $('nav.a').parents( "li, ul" ).removeClass("active");
+        $('.collapse.a').parents("li, ul").removeClass("active");
     };
+
 
     $( "nav.li" ).click(function() {
         removeActive();
         $(this).addClass( "active" );
     });
+
 
     removeActive();
     $( "a[href='" + location.hash + "']" ).parent( "li" ).addClass( "active" );
@@ -30,12 +33,16 @@ $( document ).ready(function() {
     myRedirect('/management/login/')*/
 
     $( ".nav-sidebar a" ).click(function() {
-        console.log();
+
         var tub_num = $(this).attr('href')[1];
-        $('#counters-tabs-'+tub_num).empty();
-        //$('#kv_num').empty();
-        $("div.save_form#{0} > H1".f(tub_num)).empty();
-        //$('div.save_form#'+tub_num+' > H1'.f(tub_num)).empty();
+
+        if (typeof tub_num !== 'undefined')
+        {
+            $('#counters-tabs-' + tub_num).empty();
+            //$('#kv_num').empty();
+            $("div.save_form#{0} > H1".f(tub_num)).empty();
+            //$('div.save_form#'+tub_num+' > H1'.f(tub_num)).empty();
+        }
     });
 
 

@@ -30,10 +30,10 @@
         </div>
         <div class="navbar-collapse collapse">
             <ul class="nav navbar-nav navbar-right">
-                <li><a href="#">Dashboard</a></li>
+                <!--<li><a href="#">Dashboard</a></li>
                 <li><a href="#">Settings</a></li>
-                <li><a href="#">Profile</a></li>
-                <li><a href="#" id="log_out">Help</a></li>
+                <li><a href="#">Profile</a></li>-->
+                <li><a href="#" id="log_out">Выход</a></li>
             </ul>
             <form class="navbar-form navbar-right">
                 <input type="text" class="form-control" placeholder="Search...">
@@ -49,9 +49,14 @@
                 <li class="active"><a data-toggle="tab" href="#start">Обзор</a></li>
                 <li><a data-toggle="tab" href="#upload">Загрузить данные</a></li>
                 <li><a data-toggle="tab" href="#download">Выгрузить данные</a></li>
-                <li><a data-toggle="tab" href="#table">Таблица</a></li>
+                <li>
+                    <a href="#" data-target="#item1" data-toggle="collapse" data-parent="#stacked-menu">Реестры Электроэнергия<span class="caret arrow"></span></a>
+                    <ul class="nav nav-stacked collapse left-submenu" id="item1">
+                        <li><a data-toggle="tab" rel="expand" href="#50">50 лет Победы, 22</a></li>
+                        <li><a data-toggle="tab" rel="expand" href="#table">Таблица</a></li>
+                    </ul>
+                </li>
                 <div class="menublank"></div>
-                <li><a data-toggle="tab" href="#50">50 лет победы, 22</a></li>
                 {% for house in houses %}
                     {% if forloop.counter == 1 %}
                         <li><a data-toggle="tab" href="#{{ forloop.counter }}">{{ house.street }}, {{ house.house_number }}</a></li>
@@ -459,7 +464,7 @@
                 </div>
 
             {% for apartments in house_apartments %}
-                <div id="{{ forloop.counter }}" class="tab-pane fade {% if forloop.counter == 1 %}in active{% endif %}">
+                <div id="{{ forloop.counter }}" class="tab-pane fade {% if forloop.counter == 1 %}in {% endif %}">
                         <h1>{{ apartments.house.street }}, {{ apartments.house.house_number }}</h1>
                         {% for apartment in apartments.apartments_data %}
                             <button class="btn btn-primary kv_button" value="{{ apartment.0 }}">{{ apartment.0 }}<span hidden id = "acc">{{ apartment.1 }}</span></button>
